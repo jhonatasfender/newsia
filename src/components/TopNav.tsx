@@ -1,16 +1,20 @@
 import Link from "next/link";
 import { supabaseServer } from "@/lib/supabase/server";
+import { supabaseWritable } from "@/lib/supabase/writable";
 import { redirect } from "next/navigation";
+import { unstable_noStore as noStore } from "next/cache";
+import type { ReactElement } from "react";
 
 async function signOut() {
   "use server";
-  const supabase = supabaseServer();
+  const supabase = await supabaseWritable();
   await supabase.auth.signOut();
   redirect("/login");
 }
 
-export default async function TopNav(): Promise<JSX.Element> {
-  const supabase = supabaseServer();
+export default async function TopNav(): Promise<ReactElement> {
+  noStore();
+  const supabase = await supabaseServer();
   const {
     data: { user },
   } = await supabase.auth.getUser();

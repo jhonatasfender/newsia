@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabase/server";
-import NewsList from "@/components/NewsList";
+import ArticlesTable from "@/components/ArticlesTable";
 
 export default async function AdminHome() {
   const supabase = supabaseServer();
@@ -18,7 +18,7 @@ export default async function AdminHome() {
         <h1 className="text-2xl sm:text-3xl font-extrabold">Admin • Notícias</h1>
         <p className="text-sm text-black/70">Listagem de matérias cadastradas</p>
       </div>
-      <NewsList />
+      <ArticlesTable />
     </main>
   );
 }
