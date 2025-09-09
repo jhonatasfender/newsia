@@ -53,7 +53,6 @@ export default async function EditArticlePage({ params }: Params) {
         <h1 className="text-2xl font-extrabold mb-4">Editar Notícia</h1>
         <form action={updateArticle} className="grid gap-3">
           <input type="hidden" name="id" value={data.id} />
-          <input type="hidden" id="body" name="body" />
           <div>
             <label className="text-sm font-medium" htmlFor="image_url">
               Imagem do banner (URL)
