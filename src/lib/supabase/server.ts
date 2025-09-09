@@ -8,12 +8,10 @@ export async function supabaseServer() {
 
   return createServerClient(url, anonKey, {
     cookies: {
-      get(name: string) {
-        return cookieStore.get(name)?.value;
+      getAll() {
+        return cookieStore.getAll();
       },
-      // In Server Components, cookies are read-only. Writable helpers live in actions/route handlers.
-      set() {},
-      remove() {},
+      setAll() {},
     },
   });
 }
