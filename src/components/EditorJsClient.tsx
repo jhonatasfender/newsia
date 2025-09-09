@@ -11,7 +11,12 @@ type Props = {
   onInstance?: (instance: EditorJS) => void;
 };
 
-export default function EditorJsClient({ initialData, onReady, onChange, onInstance }: Props) {
+export default function EditorJsClient({
+  initialData,
+  onReady,
+  onChange,
+  onInstance,
+}: Props) {
   const ref = useRef<EditorJS | null>(null);
   const onInstanceRef = useRef<Props["onInstance"]>(onInstance);
 
@@ -66,7 +71,10 @@ export default function EditorJsClient({ initialData, onReady, onChange, onInsta
           quote: {
             class: Quote as unknown as ToolConstructable,
             inlineToolbar: true,
-            config: { quotePlaceholder: "Citação", captionPlaceholder: "Autor" },
+            config: {
+              quotePlaceholder: "Citação",
+              captionPlaceholder: "Autor",
+            },
           },
           table: Table as unknown as ToolConstructable,
           embed: Embed as unknown as ToolConstructable,
@@ -90,13 +98,18 @@ export default function EditorJsClient({ initialData, onReady, onChange, onInsta
       mounted = false;
       const inst = ref.current as unknown as { destroy?: () => void } | null;
       if (inst && typeof inst.destroy === "function") {
-        try { inst.destroy(); } catch {}
+        try {
+          inst.destroy();
+        } catch {}
       }
       ref.current = null;
     };
   }, [initialData, onReady, onChange]);
 
-  return <div id="editorjs" className="min-h-[320px] border border-black/15 rounded-md bg-white" />;
+  return (
+    <div
+      id="editorjs"
+      className="min-h-[320px] border border-black/15 rounded-md bg-white"
+    />
+  );
 }
-
-

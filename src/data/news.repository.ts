@@ -45,5 +45,3 @@ export class NewsRepository {
     return data ?? null;
   }
 }
-
-

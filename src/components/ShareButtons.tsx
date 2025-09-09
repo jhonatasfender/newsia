@@ -19,7 +19,8 @@ export default function ShareButtons(props: ShareButtonsProps) {
 
   const onCopy = useCallback(async () => {
     try {
-      const textToCopy = shareUrl || (typeof window !== "undefined" ? window.location.href : "");
+      const textToCopy =
+        shareUrl || (typeof window !== "undefined" ? window.location.href : "");
       await navigator.clipboard.writeText(textToCopy);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
@@ -28,12 +29,22 @@ export default function ShareButtons(props: ShareButtonsProps) {
     }
   }, [shareUrl]);
 
-  const facebookHref = useMemo(() => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, [shareUrl]);
-  const linkedinHref = useMemo(() => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`, [shareUrl]);
+  const facebookHref = useMemo(
+    () =>
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
+    [shareUrl],
+  );
+  const linkedinHref = useMemo(
+    () =>
+      `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
+    [shareUrl],
+  );
 
   return (
     <section aria-labelledby="share-heading" className="mt-10">
-      <h2 id="share-heading" className="text-lg font-semibold mb-3">Compartilhar</h2>
+      <h2 id="share-heading" className="text-lg font-semibold mb-3">
+        Compartilhar
+      </h2>
       <div className="flex flex-wrap items-center gap-3">
         <a
           href={facebookHref}
@@ -66,5 +77,3 @@ export default function ShareButtons(props: ShareButtonsProps) {
     </section>
   );
 }
-
-

@@ -12,11 +12,16 @@ async function updateArticle(formData: FormData) {
   const id = String(formData.get("id") || "");
   const title = String(formData.get("title") || "");
   const slug = String(formData.get("slug") || "");
-  const minutes = formData.get("minutes") ? Number(formData.get("minutes")) : null;
+  const minutes = formData.get("minutes")
+    ? Number(formData.get("minutes"))
+    : null;
   const body = String(formData.get("body") || "");
   const imageUrl = String(formData.get("image_url") || "");
 
-  await supabase.from("articles").update({ title, slug, minutes, body, image_url: imageUrl }).eq("id", id);
+  await supabase
+    .from("articles")
+    .update({ title, slug, minutes, body, image_url: imageUrl })
+    .eq("id", id);
   redirect("/admin");
 }
 
@@ -37,7 +42,9 @@ export default async function EditArticlePage({ params }: Params) {
 
   let initialBlocks: OutputData | undefined = undefined;
   try {
-    initialBlocks = data.body ? (JSON.parse(data.body) as OutputData) : undefined;
+    initialBlocks = data.body
+      ? (JSON.parse(data.body) as OutputData)
+      : undefined;
   } catch {}
 
   return (
@@ -48,40 +55,83 @@ export default async function EditArticlePage({ params }: Params) {
           <input type="hidden" name="id" value={data.id} />
           <input type="hidden" id="body" name="body" />
           <div>
-            <label className="text-sm font-medium" htmlFor="image_url">Imagem do banner (URL)</label>
-            <input id="image_url" name="image_url" defaultValue={data.image_url ?? ""} placeholder="https://..." className="mt-1 w-full h-10 px-3 rounded-md border border-black/15" />
+            <label className="text-sm font-medium" htmlFor="image_url">
+              Imagem do banner (URL)
+            </label>
+            <input
+              id="image_url"
+              name="image_url"
+              defaultValue={data.image_url ?? ""}
+              placeholder="https://..."
+              className="mt-1 w-full h-10 px-3 rounded-md border border-black/15"
+            />
             {data.image_url ? (
               <div className="mt-2">
                 <div className="relative w-full max-w-xl aspect-[16/9] rounded-md overflow-hidden border border-black/10">
-                  <Image src={data.image_url} alt="Prévia do banner" fill className="object-cover" />
+                  <Image
+                    src={data.image_url}
+                    alt="Prévia do banner"
+                    fill
+                    className="object-cover"
+                  />
                 </div>
               </div>
             ) : null}
           </div>
           <div>
-            <label className="text-sm font-medium" htmlFor="title">Título</label>
-            <input id="title" name="title" defaultValue={data.title} className="mt-1 w-full h-10 px-3 rounded-md border border-black/15" />
+            <label className="text-sm font-medium" htmlFor="title">
+              Título
+            </label>
+            <input
+              id="title"
+              name="title"
+              defaultValue={data.title}
+              className="mt-1 w-full h-10 px-3 rounded-md border border-black/15"
+            />
           </div>
           <div>
-            <label className="text-sm font-medium" htmlFor="slug">Slug</label>
-            <input id="slug" name="slug" defaultValue={data.slug} className="mt-1 w-full h-10 px-3 rounded-md border border-black/15" />
+            <label className="text-sm font-medium" htmlFor="slug">
+              Slug
+            </label>
+            <input
+              id="slug"
+              name="slug"
+              defaultValue={data.slug}
+              className="mt-1 w-full h-10 px-3 rounded-md border border-black/15"
+            />
           </div>
           <div>
             <label className="text-sm font-medium">Conteúdo</label>
             <EditorJsField initialData={initialBlocks} hiddenInputId="body" />
           </div>
           <div>
-            <label className="text-sm font-medium" htmlFor="minutes">Minutos</label>
-            <input id="minutes" name="minutes" type="number" defaultValue={data.minutes ?? undefined} className="mt-1 w-full h-10 px-3 rounded-md border border-black/15" />
+            <label className="text-sm font-medium" htmlFor="minutes">
+              Minutos
+            </label>
+            <input
+              id="minutes"
+              name="minutes"
+              type="number"
+              defaultValue={data.minutes ?? undefined}
+              className="mt-1 w-full h-10 px-3 rounded-md border border-black/15"
+            />
           </div>
           <div className="mt-2 flex gap-3">
-            <button className="h-10 px-4 rounded-md bg-black text-white" type="submit">Salvar</button>
-            <a className="h-10 px-4 rounded-md border border-black/15 inline-flex items-center" href="/admin">Cancelar</a>
+            <button
+              className="h-10 px-4 rounded-md bg-black text-white"
+              type="submit"
+            >
+              Salvar
+            </button>
+            <a
+              className="h-10 px-4 rounded-md border border-black/15 inline-flex items-center"
+              href="/admin"
+            >
+              Cancelar
+            </a>
           </div>
         </form>
       </div>
     </main>
   );
 }
-
-

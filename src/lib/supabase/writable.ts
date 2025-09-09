@@ -13,12 +13,14 @@ export async function supabaseWritable() {
       },
       setAll(cookiesToSet) {
         for (const cookie of cookiesToSet) {
-          const { name, value, options } = cookie as unknown as { name: string; value: string; options: Record<string, unknown> };
+          const { name, value, options } = cookie as unknown as {
+            name: string;
+            value: string;
+            options: Record<string, unknown>;
+          };
           cookieStore.set({ name, value, ...options });
         }
       },
     },
   });
 }
-
-

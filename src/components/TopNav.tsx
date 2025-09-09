@@ -23,13 +23,24 @@ export default async function TopNav(): Promise<ReactElement> {
     <header className="w-full bg-black text-white sticky top-0 z-50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 h-14 flex items-center">
         {/* Brand */}
-        <Link href="/" className="text-lg font-bold text-[color:var(--color-primary)]">IA News</Link>
+        <Link
+          href="/"
+          className="text-lg font-bold text-[color:var(--color-primary)]"
+        >
+          IA News
+        </Link>
 
         {/* Center menu */}
         <nav className="mx-auto hidden md:flex items-center gap-8 text-sm text-white/85">
-          <Link className="hover:text-white" href="#tecnologia">Tecnologia</Link>
-          <Link className="hover:text-white" href="#emprego">Emprego</Link>
-          <Link className="hover:text-white" href="#sociedade">Sociedade</Link>
+          <Link className="hover:text-white" href="#tecnologia">
+            Tecnologia
+          </Link>
+          <Link className="hover:text-white" href="#emprego">
+            Emprego
+          </Link>
+          <Link className="hover:text-white" href="#sociedade">
+            Sociedade
+          </Link>
         </nav>
 
         {/* Right side */}
@@ -41,21 +52,29 @@ export default async function TopNav(): Promise<ReactElement> {
                 placeholder="Buscar..."
                 className="h-9 w-60 rounded-md bg-white/10 placeholder-white/60 text-white pl-9 pr-3 outline-none border border-white/10 focus:border-[color:var(--color-primary)]/60"
               />
-              <i className="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-white/60" aria-hidden />
+              <i
+                className="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-white/60"
+                aria-hidden
+              />
             </div>
           </div>
 
           {user ? (
             <form action={signOut}>
-              <button className="h-9 px-3 rounded-md bg-white text-black text-sm font-semibold">Sair</button>
+              <button className="h-9 px-3 rounded-md bg-white text-black text-sm font-semibold">
+                Sair
+              </button>
             </form>
           ) : (
-            <Link href="/login" className="h-9 px-3 inline-flex items-center rounded-md bg-white text-black text-sm font-semibold">Entrar</Link>
+            <Link
+              href="/login"
+              className="h-9 px-3 inline-flex items-center rounded-md bg-white text-black text-sm font-semibold"
+            >
+              Entrar
+            </Link>
           )}
         </div>
       </div>
     </header>
   );
 }
-
-

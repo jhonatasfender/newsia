@@ -14,21 +14,27 @@ export async function POST(request: Request) {
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
   const supabase = createServerClient(url, anonKey, {
     cookies: {
-      get(name: string) {
-        return store.get(name)?.value;
+      getAll() {
+        return store.getAll();
       },
-      set(name: string, value: string, options: Record<string, unknown>) {
-        res.cookies.set({ name, value, ...options });
-      },
-      remove(name: string, options: Record<string, unknown>) {
-        res.cookies.set({ name, value: "", ...options });
+      setAll(cookiesToSet) {
+        for (const cookie of cookiesToSet) {
+          const { name, value, options } = cookie as unknown as {
+            name: string;
+            value: string;
+            options: Record<string, unknown>;
+          };
+          res.cookies.set({ name, value, ...options });
+        }
       },
     },
   });
 
-  const { error } = await supabase.auth.setSession({ access_token, refresh_token });
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+  const { error } = await supabase.auth.setSession({
+    access_token,
+    refresh_token,
+  });
+  if (error)
+    return NextResponse.json({ error: error.message }, { status: 400 });
   return res;
 }
-
-

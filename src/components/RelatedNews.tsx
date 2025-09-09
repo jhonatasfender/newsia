@@ -19,13 +19,13 @@ export default function RelatedNews({ currentHref }: RelatedNewsProps) {
 
   const all: NewsItem[] = [lead, ...newsCards];
 
-  const items = all
-    .filter((n) => (n.href ?? "") !== currentHref)
-    .slice(0, 3);
+  const items = all.filter((n) => (n.href ?? "") !== currentHref).slice(0, 3);
 
   return (
     <section aria-labelledby="related-heading" className="mt-12">
-      <h2 id="related-heading" className="text-lg font-semibold mb-4">Notícias Relacionadas</h2>
+      <h2 id="related-heading" className="text-lg font-semibold mb-4">
+        Notícias Relacionadas
+      </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {items.map((n) => (
           <NewsCard
@@ -44,5 +44,3 @@ export default function RelatedNews({ currentHref }: RelatedNewsProps) {
     </section>
   );
 }
-
-

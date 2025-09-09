@@ -1,6 +1,7 @@
 import Link from "next/link";
+import type { ReactElement } from "react";
 
-export default function Hero(): JSX.Element {
+export default function Hero(): ReactElement {
   return (
     <section className="relative w-full overflow-hidden text-white">
       {/* Background image with dark overlay */}
@@ -10,10 +11,12 @@ export default function Hero(): JSX.Element {
       </div>
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-24">
         <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight">
-          Inteligência Artificial e <span className="text-[color:var(--color-primary)]">Sociedade</span>
+          Inteligência Artificial e{" "}
+          <span className="text-[color:var(--color-primary)]">Sociedade</span>
         </h1>
         <p className="mt-4 max-w-2xl text-white/85">
-          Análises profundas sobre como a IA está transformando tecnologia, emprego e sociedade.
+          Análises profundas sobre como a IA está transformando tecnologia,
+          emprego e sociedade.
         </p>
         <div className="mt-8">
           <Link
@@ -27,5 +30,3 @@ export default function Hero(): JSX.Element {
     </section>
   );
 }
-
-

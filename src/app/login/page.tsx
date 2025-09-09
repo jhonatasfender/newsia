@@ -3,7 +3,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import AuthClient from "@/components/AuthClient";
 
 export default async function LoginPage() {
-  const supabase = supabaseServer();
+  const supabase = await supabaseServer();
   const { data } = await supabase.auth.getSession();
   if (data.session) redirect("/admin");
   return (
@@ -15,5 +15,3 @@ export default async function LoginPage() {
     </main>
   );
 }
-
-

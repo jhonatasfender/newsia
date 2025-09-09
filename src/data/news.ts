@@ -15,7 +15,8 @@ export const featuredLead = {
   meta: "15 Jan 2024 • 5 min",
   date: "15 Jan 2024",
   minutes: 5,
-  title: "OpenAI Anuncia Grandes Demissões Após Automação de 40% dos Empregos em Tech",
+  title:
+    "OpenAI Anuncia Grandes Demissões Após Automação de 40% dos Empregos em Tech",
   excerpt:
     "Empresa líder em IA revela que seus próprios sistemas automatizaram significativa parte de suas operações internas, levando a cortes massivos na força de trabalho.",
   href: "/noticias/openai-demissoes-automatizacao",
@@ -89,5 +90,3 @@ export const newsCards: NewsItem[] = [
     href: "/noticias/ibm-breakthrough-quantum",
   },
 ];
-
-
