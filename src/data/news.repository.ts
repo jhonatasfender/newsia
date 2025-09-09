@@ -23,7 +23,7 @@ export type NewsArticle = {
 
 export class NewsRepository {
   async listPublished(limit: number = 20): Promise<NewsArticle[]> {
-    const supabase = supabaseServer();
+    const supabase = await supabaseServer();
     const { data, error } = await supabase
       .from("articles")
       .select("*")
@@ -35,7 +35,7 @@ export class NewsRepository {
   }
 
   async getBySlug(slug: string): Promise<NewsArticle | null> {
-    const supabase = supabaseServer();
+    const supabase = await supabaseServer();
     const { data, error } = await supabase
       .from("articles")
       .select("*")

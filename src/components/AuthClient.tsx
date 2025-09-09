@@ -45,10 +45,17 @@ export default function AuthClient(): ReactElement {
         variables: {
           default: {
             colors: {
-              brand: "#fcd34d",
-              brandAccent: "#f59e0b",
+              brand: "#000000",
+              brandAccent: "#111111",
             },
           },
+        },
+        className: {
+          button:
+            "h-10 rounded-md bg-[color:var(--color-primary)] text-black font-semibold hover:brightness-110",
+          input:
+            "h-10 px-3 rounded-md border border-black/15 outline-none focus:border-[color:var(--color-primary)]",
+          anchor: "text-[color:var(--color-primary)] hover:underline",
         },
       }}
       localization={{
