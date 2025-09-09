@@ -1,0 +1,112 @@
+## Regras do Projeto — Portal de Notícias (SSR + Supabase)
+
+### Objetivo
+- **Escopo atual**: todo o portal será renderizado via SSR.
+- **Evolução**: manter base para autenticação e dados com Supabase via SSR em todas as rotas; CSR apenas em widgets específicos quando indispensável.
+
+### Estratégia de Renderização
+- **Padrão: SSR (server-side rendering) em todas as páginas**
+  - Todas as rotas (home, seções, artigos, institucionais) serão renderizadas no servidor.
+  - Cache de respostas via Next (revalidate/headers) conforme necessidade de frescor.
+- **Revalidação**
+  - Utilizar `revalidate` por rota e/ou revalidação on-demand (tags) quando houver atualização de conteúdo.
+  - Sugerido: home/section: 60–300s; artigo publicado: 300–1800s; institucionais: manual/on-demand.
+- **Hydration/CSR**
+  - CSR apenas para widgets interativos não críticos (comentários, enquetes, tempo real), isolados.
+
+### Supabase (Next.js App Router — SSR/CSR)
+- **Cliente SSR**
+  - Usar `@supabase/ssr` para criar cliente no servidor via `cookies()` (Next 15). Evitar `@supabase/auth-helpers-nextjs` para App Router.
+  - Padrão agnóstico:
+    - Servidor: criar cliente lendo cookies de `access_token` e `refresh_token` (nomes internos do helper do framework) e invocar `auth.getUser()` quando precisar de sessão.
+    - Navegador: cliente isolado para funcionalidades opcionais de UI (ex.: votar/comentar) evitando vazar chaves.
+- **Sessões e cookies**
+  - Cookies com `SameSite=Lax`, `Secure` (em produção) e `HttpOnly` para tokens.
+  - Renovar sessão via middleware do framework em todas as requisições SSR quando o usuário estiver logado.
+- **Segurança**
+  - Ativar RLS em todas as tabelas que envolvem dados de usuário.
+  - Nunca expor `service_role` no cliente. Variáveis sensíveis ficam apenas no servidor/edge functions.
+  - Para dados públicos (notícias), usar visões/tabelas com políticas somente leitura apropriadas para acesso anônimo, se vierem do Supabase.
+- **Acesso a dados**
+  - Encapsular acesso em um pequeno "repository" por domínio (ex.: `NewsRepository`) para isolar consultas e regras; evitar serviços genéricos.
+  - No SSR, preferir consultas determinísticas e cacheáveis com headers adequados.
+- **Variáveis de ambiente**
+  - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` para cliente público; segredos somente no servidor.
+  - Nunca commitar chaves reais; usar `.env.example`.
+
+### SEO e Conteúdo
+- **Metadados**
+  - Preencher `title`, `description`, `og:*`, `twitter:*` por página/slug; garantir `og:image` 1200x630.
+  - Incluir `canonical` e `alternate` (quando houver i18n).
+- **Estrutura de conteúdo**
+  - Usar headings semânticos (`h1` único por página), `article`, `section`, `nav`, `aside`.
+  - Marcação estruturada (JSON-LD) para Article/NewsArticle quando aplicável.
+- **Sitemap/Robots**
+  - Gerar `sitemap.xml` e `robots.txt` em build; atualizar on-demand ao publicar/arquivar artigos.
+  - Respeitar trailing slash e política de canonicalização.
+
+### Roteamento e Slugs
+- Slugs de artigos estáveis, em minúsculas, com hífens, imutáveis após publicação.
+- Páginas dinâmicas renderizadas via SSR; geração de caminhos estáticos não será utilizada.
+- Redirecionos 301 para alterações de estrutura (ex.: mudança de categoria) preservando SEO.
+
+### Performance
+- **HTTP Cache**
+  - Em SSR, definir `Cache-Control` adequado por rota e utilizar `revalidate`/tags para conteúdo que se atualiza.
+- **Imagens**
+  - Utilizar CDN/`<img>` otimizado do framework com lazy-loading e formatos modernos (AVIF/WebP), `sizes` e `srcset` corretos.
+- **Fontes**
+  - `font-display: swap`, subset/variable fonts quando possível.
+- **CSS/JS**
+  - CSS crítico inline para above-the-fold; split de JS por rota; evitar pacotes pesados no bundle público.
+
+### Acessibilidade (WCAG 2.1 AA)
+- Contraste suficiente, foco visível, navegação por teclado, landmarks ARIA, labels ligados a inputs.
+- Testar com leitores de tela em páginas principais e artigos.
+
+### Padrões de Código
+- **Naming**: Inglês, descritivo, sem abreviações; classes/arquivos PascalCase quando componentes, snake/kebab conforme convenção do framework.
+- **Arquitetura**: aplicar SOLID; componentes pequenos e focados; evitar "God components".
+- **Dados**: preferir padrão Repository para isolar acesso a dados; sem camadas de "services" genéricos.
+- **Tipagem**: manter tipagem estrita (TypeScript recomendado); evitar `any`.
+- **Erros**: tratar erros de fetch com estados de UI claros; nunca silenciar exceções.
+
+### Estrutura de Pastas Sugerida (ajustar ao framework)
+- `content/` (Markdown/JSON estático de artigos/menus até integrar CMS/Supabase)
+- `src/lib/` (utilitários, tipagens)
+- `src/data/` (repositories para leitura SSR/SSG)
+- `src/components/` (UI reutilizável, sem side-effects de dados)
+- `src/pages` ou `src/routes` (conforme framework)
+- `public/` (imagens estáticas, favicon, manifest)
+
+### Integração com Supabase — Checklist rápido
+- [ ] Habilitar RLS e políticas de leitura apropriadas
+- [ ] Configurar `@supabase/ssr` e middleware de sessão no framework
+- [ ] Guardar segredos somente no servidor; não expor `service_role`
+- [ ] Definir estratégia de cache por rota (SSR vs SSG/ISR)
+- [ ] Webhook de revalidação disparado em publicação/edição
+
+### Convenções de Código (Next + Supabase)
+- `src/lib/supabase/server.ts`: cliente SSR com `@supabase/ssr` e `cookies()` (fonte de verdade para dados).
+- `src/lib/supabase/client.ts`: cliente browser somente para widgets específicos.
+- Repositórios em `src/data/*repository.ts` (sem camada de services).
+
+### Diretrizes para IA (Cursor)
+- Ao fazer mudanças de código:
+  - Explicar brevemente o impacto e listar arquivos alterados.
+  - Preferir mudanças atômicas e coerentes por commit/PR.
+  - Não gerar blobs longos; manter trechos essenciais e legíveis.
+- Sempre respeitar estas regras ao implementar rotas:
+  - Usar SSR por padrão; CSR apenas para widgets específicos.
+  - Configurar cliente Supabase no servidor via cookies e `@supabase/ssr`.
+  - Manter SEO e acessibilidade como first-class citizens.
+
+### Decisões atuais
+- Páginas serão todas SSR no MVP, com revalidação configurável por rota/tag.
+- Infraestrutura SSR com Supabase em todas as rotas desde o início.
+
+### Referências (para consulta durante implementação)
+- Supabase SSR: `https://supabase.com/docs/guides/auth/server-side-rendering`
+- Pacote SSR (agnóstico): `https://github.com/supabase/ssr`
+- Padrões de renderização web (SSR/SSG/ISR) — documentação do framework escolhido (Next.js, SvelteKit, Astro)
+
