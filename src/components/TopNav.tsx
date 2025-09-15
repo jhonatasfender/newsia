@@ -3,6 +3,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { supabaseWritable } from "@/lib/supabase/writable";
 import { redirect } from "next/navigation";
 import { unstable_noStore as noStore } from "next/cache";
+import { NewsRepository } from "@/data/news.repository";
 import type { ReactElement } from "react";
 
 async function signOut() {
@@ -19,6 +20,9 @@ export default async function TopNav(): Promise<ReactElement> {
     data: { user },
   } = await supabase.auth.getUser();
 
+  const newsRepo = new NewsRepository();
+  const categories = await newsRepo.getCategories();
+
   return (
     <header className="w-full bg-black text-white sticky top-0 z-50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 h-14 flex items-center">
@@ -32,15 +36,15 @@ export default async function TopNav(): Promise<ReactElement> {
 
         {/* Center menu */}
         <nav className="mx-auto hidden md:flex items-center gap-8 text-sm text-white/85">
-          <Link className="hover:text-white" href="#tecnologia">
-            Tecnologia
-          </Link>
-          <Link className="hover:text-white" href="#emprego">
-            Emprego
-          </Link>
-          <Link className="hover:text-white" href="#sociedade">
-            Sociedade
-          </Link>
+          {categories.map((category) => (
+            <Link 
+              key={category.id}
+              className="hover:text-white" 
+              href={`/categoria/${category.slug}`}
+            >
+              {category.title}
+            </Link>
+          ))}
         </nav>
 
         {/* Right side */}

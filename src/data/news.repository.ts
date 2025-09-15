@@ -243,4 +243,78 @@ export class NewsRepository {
     }
   }
 
+  async getCategories(): Promise<NewsCategory[]> {
+    try {
+      const supabase = await supabaseServer();
+      
+      const { data, error } = await supabase
+        .from("categories")
+        .select("id, slug, title, created_at")
+        .order("title");
+
+      if (error) {
+        console.error("Erro ao buscar categorias:", error);
+        return [];
+      }
+
+      return data || [];
+    } catch (error) {
+      console.error("Erro inesperado ao buscar categorias:", error);
+      return [];
+    }
+  }
+
+  async getCategoryBySlug(slug: string): Promise<NewsCategory | null> {
+    try {
+      const supabase = await supabaseServer();
+      
+      const { data, error } = await supabase
+        .from("categories")
+        .select("id, slug, title, created_at")
+        .eq("slug", slug)
+        .single();
+
+      if (error) {
+        console.error("Erro ao buscar categoria:", error);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Erro inesperado ao buscar categoria:", error);
+      return null;
+    }
+  }
+
+  async getNewsByCategory(categoryId: string, limit: number = 20): Promise<NewsArticle[]> {
+    try {
+      const supabase = await supabaseServer();
+      
+      const { data, error } = await supabase
+        .from("articles")
+        .select(`
+          *,
+          categories (
+            id,
+            title,
+            slug
+          )
+        `)
+        .eq("category_id", categoryId)
+        .not("published_at", "is", null)
+        .order("published_at", { ascending: false })
+        .limit(limit);
+
+      if (error) {
+        console.error("Erro ao buscar notícias por categoria:", error);
+        return [];
+      }
+
+      return data || [];
+    } catch (error) {
+      console.error("Erro inesperado ao buscar notícias por categoria:", error);
+      return [];
+    }
+  }
+
 }
