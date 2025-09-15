@@ -12,15 +12,25 @@ async function updateArticle(formData: FormData) {
   const id = String(formData.get("id") || "");
   const title = String(formData.get("title") || "");
   const slug = String(formData.get("slug") || "");
+  const excerpt = String(formData.get("excerpt") || "");
   const minutes = formData.get("minutes")
     ? Number(formData.get("minutes"))
     : null;
   const body = String(formData.get("body") || "");
   const imageUrl = String(formData.get("image_url") || "");
+  const categoryId = String(formData.get("category_id") || "");
 
   await supabase
     .from("articles")
-    .update({ title, slug, minutes, body, image_url: imageUrl })
+    .update({ 
+      title, 
+      slug, 
+      excerpt: excerpt.trim() || null,
+      minutes, 
+      body, 
+      image_url: imageUrl.trim() || null,
+      category_id: categoryId || null
+    })
     .eq("id", id);
   redirect("/admin");
 }
@@ -34,9 +44,21 @@ export default async function EditArticlePage({ params }: Params) {
 
   const { data } = await supabase
     .from("articles")
-    .select("id, title, slug, minutes, body, image_url")
+    .select(`
+      id, title, slug, excerpt, minutes, body, image_url, category_id,
+      categories (
+        id,
+        title,
+        slug
+      )
+    `)
     .eq("id", params.id)
     .single();
+
+  const { data: categories } = await supabase
+    .from("categories")
+    .select("id, title, slug")
+    .order("title");
 
   if (!data) redirect("/admin");
 
@@ -98,6 +120,37 @@ export default async function EditArticlePage({ params }: Params) {
               defaultValue={data.slug}
               className="mt-1 w-full h-10 px-3 rounded-md border border-black/15"
             />
+          </div>
+          <div>
+            <label className="text-sm font-medium" htmlFor="excerpt">
+              Resumo
+            </label>
+            <textarea
+              id="excerpt"
+              name="excerpt"
+              defaultValue={data.excerpt ?? ""}
+              placeholder="Breve descrição da notícia..."
+              rows={3}
+              className="mt-1 w-full px-3 py-2 rounded-md border border-black/15 resize-none"
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium" htmlFor="category_id">
+              Categoria
+            </label>
+            <select
+              id="category_id"
+              name="category_id"
+              defaultValue={data.category_id ?? ""}
+              className="mt-1 w-full h-10 px-3 rounded-md border border-black/15"
+            >
+              <option value="">Selecione uma categoria (opcional)</option>
+              {categories?.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.title}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="text-sm font-medium">Conteúdo</label>

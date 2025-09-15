@@ -174,18 +174,20 @@ export default function EditorJsField({ initialData, hiddenInputId }: Props) {
       ) : null}
 
       {/* Editor */}
-      <EditorJsClient
-        initialData={initialData}
-        onInstance={(inst) => {
-          editorRef.current = inst;
-        }}
-        onChange={(d) => {
-          const el = document.getElementById(
-            hiddenInputId,
-          ) as HTMLInputElement | null;
-          if (el) el.value = JSON.stringify(d);
-        }}
-      />
+      <div data-cy="editorjs-content">
+        <EditorJsClient
+          initialData={initialData}
+          onInstance={(inst) => {
+            editorRef.current = inst;
+          }}
+          onChange={(d) => {
+            const el = document.getElementById(
+              hiddenInputId,
+            ) as HTMLInputElement | null;
+            if (el) el.value = JSON.stringify(d);
+          }}
+        />
+      </div>
 
       {/* Campo hidden sincronizado desde o início */}
       <input

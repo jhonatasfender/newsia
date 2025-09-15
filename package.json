@@ -10,7 +10,14 @@
     "db:start": "supabase db start",
     "db:reset": "supabase db reset --local",
     "db:new": "supabase migration new",
-    "db:push": "supabase db push"
+    "db:push": "supabase db push",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "cypress:run:headless": "cypress run --headless",
+    "test:e2e": "cypress run --spec 'cypress/e2e/**/*.cy.ts'",
+    "test:create-news": "cypress run --spec 'cypress/e2e/create-news.cy.ts'",
+    "test:publish-news": "cypress run --spec 'cypress/e2e/publish-news.cy.ts'",
+    "test:delete-news": "cypress run --spec 'cypress/e2e/delete-news.cy.ts'"
   },
   "dependencies": {
     "@editorjs/checklist": "1.6.0",
@@ -40,6 +47,7 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "cypress": "^15.2.0",
     "eslint": "^9",
     "eslint-config-next": "15.5.2",
     "supabase": "^2.40.6",

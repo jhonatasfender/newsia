@@ -16,7 +16,7 @@ export default function FeaturedLead(props: FeaturedLeadProps): ReactElement {
   const { image, category, meta, title, excerpt, href = "#" } = props;
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 overflow-hidden rounded-xl border border-black/10 bg-white">
-      <div className="relative aspect-[16/9] md:aspect-auto md:h-full">
+      <div className="relative aspect-[4/3] md:aspect-[3/2]">
         <Image src={image} alt="" fill className="object-cover" />
       </div>
       <div className="p-6 md:p-7">

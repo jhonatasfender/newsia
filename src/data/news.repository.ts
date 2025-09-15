@@ -19,6 +19,11 @@ export type NewsArticle = {
   published_at: string | null;
   created_at: string;
   updated_at: string;
+  categories?: {
+    id: string;
+    title: string;
+    slug: string;
+  } | null;
 };
 
 export class NewsRepository {
@@ -26,7 +31,14 @@ export class NewsRepository {
     const supabase = await supabaseServer();
     const { data, error } = await supabase
       .from("articles")
-      .select("*")
+      .select(`
+        *,
+        categories (
+          id,
+          title,
+          slug
+        )
+      `)
       .not("published_at", "is", null)
       .order("published_at", { ascending: false })
       .limit(limit);
@@ -38,10 +50,197 @@ export class NewsRepository {
     const supabase = await supabaseServer();
     const { data, error } = await supabase
       .from("articles")
-      .select("*")
+      .select(`
+        *,
+        categories (
+          id,
+          title,
+          slug
+        )
+      `)
       .eq("slug", slug)
       .single();
     if (error && error.code !== "PGRST116") throw error;
     return data ?? null;
   }
+
+  async getFeaturedNews(limit: number = 6): Promise<NewsArticle[]> {
+    const supabase = await supabaseServer();
+    const { data, error } = await supabase
+      .from("articles")
+      .select(`
+        *,
+        categories (
+          id,
+          title,
+          slug
+        )
+      `)
+      .not("published_at", "is", null)
+      .order("published_at", { ascending: false })
+      .limit(limit);
+    if (error) throw error;
+    return data ?? [];
+  }
+
+  async getAllArticles(): Promise<NewsArticle[]> {
+    const supabase = await supabaseServer();
+    const { data, error } = await supabase
+      .from("articles")
+      .select(`
+        *,
+        categories (
+          id,
+          title,
+          slug
+        )
+      `)
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    return data ?? [];
+  }
+
+  async publishArticle(articleId: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const supabase = await supabaseServer();
+      
+      const { error } = await supabase
+        .from("articles")
+        .update({ published_at: new Date().toISOString() })
+        .eq("id", articleId);
+
+      if (error) {
+        console.error("Erro ao publicar artigo:", error);
+        return { success: false, error: error.message };
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error("Erro inesperado ao publicar artigo:", error);
+      return { success: false, error: "Erro interno do servidor" };
+    }
+  }
+
+  async unpublishArticle(articleId: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const supabase = await supabaseServer();
+      
+      const { error } = await supabase
+        .from("articles")
+        .update({ published_at: null })
+        .eq("id", articleId);
+
+      if (error) {
+        console.error("Erro ao despublicar artigo:", error);
+        return { success: false, error: error.message };
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error("Erro inesperado ao despublicar artigo:", error);
+      return { success: false, error: "Erro interno do servidor" };
+    }
+  }
+
+  async isArticlePublished(articleId: string): Promise<boolean> {
+    try {
+      const supabase = await supabaseServer();
+      
+      const { data, error } = await supabase
+        .from("articles")
+        .select("published_at")
+        .eq("id", articleId)
+        .single();
+
+      if (error) {
+        console.error("Erro ao verificar status de publicação:", error);
+        return false;
+      }
+
+      return data?.published_at !== null;
+    } catch (error) {
+      console.error("Erro inesperado ao verificar publicação:", error);
+      return false;
+    }
+  }
+
+  async deleteArticle(articleId: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const supabase = await supabaseServer();
+      
+      const { error } = await supabase
+        .from("articles")
+        .delete()
+        .eq("id", articleId);
+
+      if (error) {
+        console.error("Erro ao deletar artigo:", error);
+        return { success: false, error: error.message };
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error("Erro inesperado ao deletar artigo:", error);
+      return { success: false, error: "Erro interno do servidor" };
+    }
+  }
+
+  async getRelatedNews(articleId: string, categoryId: string | null, limit: number = 3): Promise<NewsArticle[]> {
+    try {
+      const supabase = await supabaseServer();
+      
+      let query = supabase
+        .from("articles")
+        .select(`
+          *,
+          categories (
+            id,
+            title,
+            slug
+          )
+        `)
+        .not("published_at", "is", null)
+        .neq("id", articleId)
+        .order("published_at", { ascending: false })
+        .limit(limit);
+
+      if (categoryId) {
+        query = query.eq("category_id", categoryId);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error("Erro ao buscar notícias relacionadas:", error);
+        return [];
+      }
+
+      return data ?? [];
+    } catch (error) {
+      console.error("Erro inesperado ao buscar notícias relacionadas:", error);
+      return [];
+    }
+  }
+
+  async getTotalPublishedCount(): Promise<number> {
+    try {
+      const supabase = await supabaseServer();
+      
+      const { count, error } = await supabase
+        .from("articles")
+        .select("*", { count: "exact", head: true })
+        .not("published_at", "is", null);
+
+      if (error) {
+        console.error("Erro ao contar notícias publicadas:", error);
+        return 0;
+      }
+
+      return count ?? 0;
+    } catch (error) {
+      console.error("Erro inesperado ao contar notícias:", error);
+      return 0;
+    }
+  }
+
 }
