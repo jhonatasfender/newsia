@@ -21,7 +21,11 @@ const eslintConfig = [
     ],
   },
   {
-    files: ["cypress/**/*.{ts,tsx}", "cypress.config.ts"],
+    files: [
+      "cypress/**/*.{ts,tsx}",
+      "cypress/**/*.d.ts",
+      "cypress.config.ts",
+    ],
     languageOptions: {
       parserOptions: {
         projectService: true,
