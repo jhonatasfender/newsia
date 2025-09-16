@@ -4,7 +4,7 @@ import Image from "next/image";
 import type { OutputData } from "@editorjs/editorjs";
 import EditorJsField from "@/components/EditorJsField";
 
-type Params = { params: { id: string } };
+type Params = { params: Promise<{ id: string }> };
 
 async function updateArticle(formData: FormData) {
   "use server";
@@ -42,6 +42,8 @@ export default async function EditArticlePage({ params }: Params) {
   } = await supabase.auth.getSession();
   if (!session) redirect("/login");
 
+  const { id } = await params;
+
   const { data } = await supabase
     .from("articles")
     .select(
@@ -54,7 +56,7 @@ export default async function EditArticlePage({ params }: Params) {
       )
     `,
     )
-    .eq("id", params.id)
+    .eq("id", id)
     .single();
 
   const { data: categories } = await supabase

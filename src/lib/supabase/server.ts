@@ -11,7 +11,16 @@ export async function supabaseServer() {
       getAll() {
         return cookieStore.getAll();
       },
-      setAll() {},
+      setAll(cookiesToSet) {
+        for (const cookie of cookiesToSet) {
+          const { name, value, options } = cookie as unknown as {
+            name: string;
+            value: string;
+            options: Record<string, unknown>;
+          };
+          cookieStore.set({ name, value, ...options });
+        }
+      },
     },
   });
 }

@@ -81,26 +81,25 @@ export default async function ArticlePage({ params }: Params) {
       <article className="mx-auto max-w-7xl px-4 sm:px-6 py-10">
         <div className="max-w-3xl w-full mx-auto">
           <nav aria-label="Breadcrumb" className="mb-4 text-sm text-black/60">
-            <ol className="flex items-center gap-2">
-              <li>
-                <Link
-                  href="/"
-                  className="hover:text-[color:var(--color-primary)]"
-                >
-                  Home
-                </Link>
-              </li>
-              <li>/</li>
-              <li>
-                <Link
-                  href="/"
-                  className="hover:text-[color:var(--color-primary)]"
-                >
-                  {article.categories?.title || "Geral"}
-                </Link>
-              </li>
-              <li>/</li>
-              <li className="text-black/80" aria-current="page">
+            <ol className="flex items-center gap-2 overflow-hidden">
+              {article.categories ? (
+                <>
+                  <li className="min-w-0 max-w-[35%] truncate">
+                    <Link
+                      href={`/categoria/${article.categories.slug}`}
+                      className="hover:text-[color:var(--color-primary)]"
+                    >
+                      {article.categories.title}
+                    </Link>
+                  </li>
+                  <li>/</li>
+                </>
+              ) : null}
+              <li
+                className="min-w-0 max-w-[60%] truncate text-black/80"
+                aria-current="page"
+                title={article.title}
+              >
                 {article.title}
               </li>
             </ol>

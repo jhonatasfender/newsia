@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState } from "react";
 
 type ShareButtonsProps = {
   title?: string;
-  url?: string; // if not provided, uses current location
+  url?: string;
 };
 
 export default function ShareButtons(props: ShareButtonsProps) {
@@ -12,22 +12,35 @@ export default function ShareButtons(props: ShareButtonsProps) {
   const [copied, setCopied] = useState(false);
 
   const shareUrl = useMemo(() => {
-    if (props.url) return props.url;
+    if (props.url) {
+      if (props.url.startsWith("http")) return props.url;
+      if (typeof window !== "undefined")
+        return new URL(props.url, window.location.origin).toString();
+      return props.url;
+    }
     if (typeof window !== "undefined") return window.location.href;
     return "";
   }, [props.url]);
 
   const onCopy = useCallback(async () => {
-    try {
-      const textToCopy =
-        shareUrl || (typeof window !== "undefined" ? window.location.href : "");
-      await navigator.clipboard.writeText(textToCopy);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch {
-      // noop
-    }
+    const textToCopy =
+      shareUrl || (typeof window !== "undefined" ? window.location.href : "");
+    await navigator.clipboard.writeText(textToCopy);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
   }, [shareUrl]);
+
+  const onInstagramShare = useCallback(async () => {
+    if (navigator.share) {
+      await navigator.share({
+        title: title || document.title,
+        text: title || document.title,
+        url: shareUrl,
+      });
+    } else {
+      await onCopy();
+    }
+  }, [shareUrl, title, onCopy]);
 
   const facebookHref = useMemo(
     () =>
@@ -46,6 +59,14 @@ export default function ShareButtons(props: ShareButtonsProps) {
         Compartilhar
       </h2>
       <div className="flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          onClick={onInstagramShare}
+          className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-[#E1306C] text-white text-sm font-medium hover:opacity-90"
+          aria-label="Compartilhar no Instagram"
+        >
+          <span>Instagram</span>
+        </button>
         <a
           href={facebookHref}
           target="_blank"
