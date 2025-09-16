@@ -7,7 +7,7 @@ import RelatedNews from "@/components/RelatedNews";
 import EditorJsRenderer from "@/components/EditorJsRenderer";
 import { createClient } from "@supabase/supabase-js";
 
-type Params = { params: { slug: string } };
+type Params = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
   const supabase = createClient(
@@ -28,7 +28,8 @@ export async function generateStaticParams() {
 
 export default async function ArticlePage({ params }: Params) {
   const newsRepo = new NewsRepository();
-  const article = await newsRepo.getBySlug(params.slug);
+  const { slug } = await params;
+  const article = await newsRepo.getBySlug(slug);
 
   if (!article) return notFound();
 
