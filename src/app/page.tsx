@@ -11,10 +11,7 @@ export default async function Home() {
   return (
     <main className="min-h-screen">
       <Hero />
-      <FeaturedNews 
-        initialArticles={initialArticles} 
-        totalCount={totalCount} 
-      />
+      <FeaturedNews initialArticles={initialArticles} totalCount={totalCount} />
       <Newsletter />
     </main>
   );

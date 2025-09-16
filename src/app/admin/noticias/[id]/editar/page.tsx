@@ -22,14 +22,14 @@ async function updateArticle(formData: FormData) {
 
   await supabase
     .from("articles")
-    .update({ 
-      title, 
-      slug, 
+    .update({
+      title,
+      slug,
       excerpt: excerpt.trim() || null,
-      minutes, 
-      body, 
+      minutes,
+      body,
       image_url: imageUrl.trim() || null,
-      category_id: categoryId || null
+      category_id: categoryId || null,
     })
     .eq("id", id);
   redirect("/admin");
@@ -44,14 +44,16 @@ export default async function EditArticlePage({ params }: Params) {
 
   const { data } = await supabase
     .from("articles")
-    .select(`
+    .select(
+      `
       id, title, slug, excerpt, minutes, body, image_url, category_id,
       categories (
         id,
         title,
         slug
       )
-    `)
+    `,
+    )
     .eq("id", params.id)
     .single();
 

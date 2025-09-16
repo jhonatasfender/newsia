@@ -31,14 +31,16 @@ export class NewsRepository {
     const supabase = await supabaseServer();
     const { data, error } = await supabase
       .from("articles")
-      .select(`
+      .select(
+        `
         *,
         categories (
           id,
           title,
           slug
         )
-      `)
+      `,
+      )
       .not("published_at", "is", null)
       .order("published_at", { ascending: false })
       .limit(limit);
@@ -50,14 +52,16 @@ export class NewsRepository {
     const supabase = await supabaseServer();
     const { data, error } = await supabase
       .from("articles")
-      .select(`
+      .select(
+        `
         *,
         categories (
           id,
           title,
           slug
         )
-      `)
+      `,
+      )
       .eq("slug", slug)
       .single();
     if (error && error.code !== "PGRST116") throw error;
@@ -68,14 +72,16 @@ export class NewsRepository {
     const supabase = await supabaseServer();
     const { data, error } = await supabase
       .from("articles")
-      .select(`
+      .select(
+        `
         *,
         categories (
           id,
           title,
           slug
         )
-      `)
+      `,
+      )
       .not("published_at", "is", null)
       .order("published_at", { ascending: false })
       .limit(limit);
@@ -87,23 +93,27 @@ export class NewsRepository {
     const supabase = await supabaseServer();
     const { data, error } = await supabase
       .from("articles")
-      .select(`
+      .select(
+        `
         *,
         categories (
           id,
           title,
           slug
         )
-      `)
+      `,
+      )
       .order("created_at", { ascending: false });
     if (error) throw error;
     return data ?? [];
   }
 
-  async publishArticle(articleId: string): Promise<{ success: boolean; error?: string }> {
+  async publishArticle(
+    articleId: string,
+  ): Promise<{ success: boolean; error?: string }> {
     try {
       const supabase = await supabaseServer();
-      
+
       const { error } = await supabase
         .from("articles")
         .update({ published_at: new Date().toISOString() })
@@ -121,10 +131,12 @@ export class NewsRepository {
     }
   }
 
-  async unpublishArticle(articleId: string): Promise<{ success: boolean; error?: string }> {
+  async unpublishArticle(
+    articleId: string,
+  ): Promise<{ success: boolean; error?: string }> {
     try {
       const supabase = await supabaseServer();
-      
+
       const { error } = await supabase
         .from("articles")
         .update({ published_at: null })
@@ -145,7 +157,7 @@ export class NewsRepository {
   async isArticlePublished(articleId: string): Promise<boolean> {
     try {
       const supabase = await supabaseServer();
-      
+
       const { data, error } = await supabase
         .from("articles")
         .select("published_at")
@@ -164,10 +176,12 @@ export class NewsRepository {
     }
   }
 
-  async deleteArticle(articleId: string): Promise<{ success: boolean; error?: string }> {
+  async deleteArticle(
+    articleId: string,
+  ): Promise<{ success: boolean; error?: string }> {
     try {
       const supabase = await supabaseServer();
-      
+
       const { error } = await supabase
         .from("articles")
         .delete()
@@ -185,20 +199,26 @@ export class NewsRepository {
     }
   }
 
-  async getRelatedNews(articleId: string, categoryId: string | null, limit: number = 3): Promise<NewsArticle[]> {
+  async getRelatedNews(
+    articleId: string,
+    categoryId: string | null,
+    limit: number = 3,
+  ): Promise<NewsArticle[]> {
     try {
       const supabase = await supabaseServer();
-      
+
       let query = supabase
         .from("articles")
-        .select(`
+        .select(
+          `
           *,
           categories (
             id,
             title,
             slug
           )
-        `)
+        `,
+        )
         .not("published_at", "is", null)
         .neq("id", articleId)
         .order("published_at", { ascending: false })
@@ -225,7 +245,7 @@ export class NewsRepository {
   async getTotalPublishedCount(): Promise<number> {
     try {
       const supabase = await supabaseServer();
-      
+
       const { count, error } = await supabase
         .from("articles")
         .select("*", { count: "exact", head: true })
@@ -246,7 +266,7 @@ export class NewsRepository {
   async getCategories(): Promise<NewsCategory[]> {
     try {
       const supabase = await supabaseServer();
-      
+
       const { data, error } = await supabase
         .from("categories")
         .select("id, slug, title, created_at")
@@ -267,7 +287,7 @@ export class NewsRepository {
   async getCategoryBySlug(slug: string): Promise<NewsCategory | null> {
     try {
       const supabase = await supabaseServer();
-      
+
       const { data, error } = await supabase
         .from("categories")
         .select("id, slug, title, created_at")
@@ -286,20 +306,25 @@ export class NewsRepository {
     }
   }
 
-  async getNewsByCategory(categoryId: string, limit: number = 20): Promise<NewsArticle[]> {
+  async getNewsByCategory(
+    categoryId: string,
+    limit: number = 20,
+  ): Promise<NewsArticle[]> {
     try {
       const supabase = await supabaseServer();
-      
+
       const { data, error } = await supabase
         .from("articles")
-        .select(`
+        .select(
+          `
           *,
           categories (
             id,
             title,
             slug
           )
-        `)
+        `,
+        )
         .eq("category_id", categoryId)
         .not("published_at", "is", null)
         .order("published_at", { ascending: false })
@@ -316,5 +341,4 @@ export class NewsRepository {
       return [];
     }
   }
-
 }

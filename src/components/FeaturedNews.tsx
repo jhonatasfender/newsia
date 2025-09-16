@@ -58,11 +58,11 @@ export default function FeaturedNews({ initialArticles, totalCount }: Props) {
     if (isLoading || showAll) return;
 
     setIsLoading(true);
-    
+
     try {
-      const response = await fetch('/api/news/all');
+      const response = await fetch("/api/news/all");
       const allArticles = await response.json();
-      
+
       if (allArticles.length > 0) {
         setArticles(allArticles);
         setShowAll(true);
@@ -90,7 +90,10 @@ export default function FeaturedNews({ initialArticles, totalCount }: Props) {
 
       <div className="mt-10 grid gap-8">
         <FeaturedLead
-          image={featuredArticle.image_url || "https://picsum.photos/seed/news-hero/1200/800"}
+          image={
+            featuredArticle.image_url ||
+            "https://picsum.photos/seed/news-hero/1200/800"
+          }
           category={featuredArticle.categories?.title || "Geral"}
           meta={formatMeta(featuredArticle)}
           title={featuredArticle.title}
@@ -108,7 +111,10 @@ export default function FeaturedNews({ initialArticles, totalCount }: Props) {
               excerpt={article.excerpt || ""}
               minutes={article.minutes || 5}
               date={formatDate(article.published_at!)}
-              imageSrc={article.image_url || "https://picsum.photos/seed/placeholder/800/450"}
+              imageSrc={
+                article.image_url ||
+                "https://picsum.photos/seed/placeholder/800/450"
+              }
               href={`/noticias/${article.slug}`}
             />
           ))}

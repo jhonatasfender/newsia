@@ -24,7 +24,7 @@ export default function EditorJsRenderer({ data }: Props) {
       case "header":
         const level = (blockData.level as number) || 2;
         const text = blockData.text as string;
-        
+
         if (level === 1) {
           return (
             <h1 key={index} className="font-bold mb-4 mt-6 first:mt-0 text-3xl">
@@ -62,8 +62,8 @@ export default function EditorJsRenderer({ data }: Props) {
         const ListTag = (blockData.style as string) === "ordered" ? "ol" : "ul";
         const items = blockData.items as string[];
         return (
-          <ListTag 
-            key={index} 
+          <ListTag
+            key={index}
             className={`mb-4 ${(blockData.style as string) === "ordered" ? "list-decimal list-inside" : "list-disc list-inside"}`}
           >
             {items.map((item: string, itemIndex: number) => (
@@ -75,7 +75,10 @@ export default function EditorJsRenderer({ data }: Props) {
         );
 
       case "checklist":
-        const checklistItems = blockData.items as Array<{ text: string; checked: boolean }>;
+        const checklistItems = blockData.items as Array<{
+          text: string;
+          checked: boolean;
+        }>;
         return (
           <ul key={index} className="mb-4">
             {checklistItems.map((item, itemIndex: number) => (
@@ -86,7 +89,9 @@ export default function EditorJsRenderer({ data }: Props) {
                   readOnly
                   className="mr-2 mt-1"
                 />
-                <span className={item.checked ? "line-through text-gray-500" : ""}>
+                <span
+                  className={item.checked ? "line-through text-gray-500" : ""}
+                >
                   {item.text}
                 </span>
               </li>
@@ -96,18 +101,28 @@ export default function EditorJsRenderer({ data }: Props) {
 
       case "quote":
         return (
-          <blockquote key={index} className="border-l-4 border-gray-300 pl-4 py-2 mb-4 italic text-gray-700">
+          <blockquote
+            key={index}
+            className="border-l-4 border-gray-300 pl-4 py-2 mb-4 italic text-gray-700"
+          >
             <p className="mb-2">{blockData.text as string}</p>
             {blockData.caption ? (
-              <cite className="text-sm text-gray-500">— {String(blockData.caption)}</cite>
+              <cite className="text-sm text-gray-500">
+                — {String(blockData.caption)}
+              </cite>
             ) : null}
           </blockquote>
         );
 
       case "code":
         return (
-          <pre key={index} className="bg-gray-100 p-4 rounded-md mb-4 overflow-x-auto">
-            <code className="text-sm font-mono">{blockData.code as string}</code>
+          <pre
+            key={index}
+            className="bg-gray-100 p-4 rounded-md mb-4 overflow-x-auto"
+          >
+            <code className="text-sm font-mono">
+              {blockData.code as string}
+            </code>
           </pre>
         );
 
@@ -139,7 +154,10 @@ export default function EditorJsRenderer({ data }: Props) {
                 {tableContent[0] && (
                   <tr>
                     {tableContent[0].map((cell: string, cellIndex: number) => (
-                      <th key={cellIndex} className="border border-gray-300 px-4 py-2 text-left">
+                      <th
+                        key={cellIndex}
+                        className="border border-gray-300 px-4 py-2 text-left"
+                      >
                         {cell}
                       </th>
                     ))}
@@ -147,15 +165,20 @@ export default function EditorJsRenderer({ data }: Props) {
                 )}
               </thead>
               <tbody>
-                {tableContent.slice(1).map((row: string[], rowIndex: number) => (
-                  <tr key={rowIndex}>
-                    {row.map((cell: string, cellIndex: number) => (
-                      <td key={cellIndex} className="border border-gray-300 px-4 py-2">
-                        {cell}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
+                {tableContent
+                  .slice(1)
+                  .map((row: string[], rowIndex: number) => (
+                    <tr key={rowIndex}>
+                      {row.map((cell: string, cellIndex: number) => (
+                        <td
+                          key={cellIndex}
+                          className="border border-gray-300 px-4 py-2"
+                        >
+                          {cell}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>
@@ -186,7 +209,9 @@ export default function EditorJsRenderer({ data }: Props) {
 
   return (
     <div className="prose prose-neutral prose-lg max-w-none">
-      {data.blocks.map((block: Block, index: number) => renderBlock(block, index))}
+      {data.blocks.map((block: Block, index: number) =>
+        renderBlock(block, index),
+      )}
     </div>
   );
 }

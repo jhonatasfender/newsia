@@ -24,7 +24,12 @@ export default function CreateArticleForm({ categories }: Props) {
   };
 
   return (
-    <form action="/api/articles/create" method="POST" className="grid gap-3" onSubmit={handleSubmit}>
+    <form
+      action="/api/articles/create"
+      method="POST"
+      className="grid gap-3"
+      onSubmit={handleSubmit}
+    >
       <div>
         <label className="text-sm font-medium" htmlFor="image_url">
           Imagem do banner (URL)
@@ -38,28 +43,29 @@ export default function CreateArticleForm({ categories }: Props) {
           className="mt-1 w-full h-10 px-3 rounded-md border border-black/15"
           data-cy="image-url-input"
         />
-        {imageUrl && (() => {
-          try {
-            new URL(imageUrl);
-            return (
-              <div className="mt-2">
-                <div className="relative w-full max-w-xl aspect-[16/9] rounded-md overflow-hidden border border-black/10">
-                  <Image
-                    src={imageUrl}
-                    alt="Prévia do banner"
-                    fill
-                    className="object-cover"
-                    onError={() => {
-                      // Hide image on error
-                    }}
-                  />
+        {imageUrl &&
+          (() => {
+            try {
+              new URL(imageUrl);
+              return (
+                <div className="mt-2">
+                  <div className="relative w-full max-w-xl aspect-[16/9] rounded-md overflow-hidden border border-black/10">
+                    <Image
+                      src={imageUrl}
+                      alt="Prévia do banner"
+                      fill
+                      className="object-cover"
+                      onError={() => {
+                        // Hide image on error
+                      }}
+                    />
+                  </div>
                 </div>
-              </div>
-            );
-          } catch {
-            return null;
-          }
-        })()}
+              );
+            } catch {
+              return null;
+            }
+          })()}
       </div>
       <div>
         <label className="text-sm font-medium" htmlFor="title">

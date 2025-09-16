@@ -37,9 +37,9 @@ export default async function TopNav(): Promise<ReactElement> {
         {/* Center menu */}
         <nav className="mx-auto hidden md:flex items-center gap-8 text-sm text-white/85">
           {categories.map((category) => (
-            <Link 
+            <Link
               key={category.id}
-              className="hover:text-white" 
+              className="hover:text-white"
               href={`/categoria/${category.slug}`}
             >
               {category.title}

@@ -7,7 +7,7 @@ type Params = { params: { slug: string } };
 export async function generateStaticParams() {
   const newsRepo = new NewsRepository();
   const categories = await newsRepo.getCategories();
-  
+
   return categories.map((category) => ({
     slug: category.slug,
   }));
@@ -16,7 +16,7 @@ export async function generateStaticParams() {
 export default async function CategoryPage({ params }: Params) {
   const newsRepo = new NewsRepository();
   const category = await newsRepo.getCategoryBySlug(params.slug);
-  
+
   if (!category) {
     return notFound();
   }
@@ -60,7 +60,10 @@ export default async function CategoryPage({ params }: Params) {
                 excerpt={article.excerpt || ""}
                 minutes={article.minutes || 5}
                 date={formatDate(article.published_at!)}
-                imageSrc={article.image_url || "https://picsum.photos/seed/placeholder/800/450"}
+                imageSrc={
+                  article.image_url ||
+                  "https://picsum.photos/seed/placeholder/800/450"
+                }
                 href={`/noticias/${article.slug}`}
               />
             ))}

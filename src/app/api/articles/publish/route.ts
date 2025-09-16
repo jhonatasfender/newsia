@@ -7,7 +7,7 @@ export async function POST(request: Request) {
   const {
     data: { session },
   } = await supabase.auth.getSession();
-  
+
   if (!session) {
     redirect("/login");
   }
@@ -34,7 +34,9 @@ export async function POST(request: Request) {
   }
 
   if (!result.success) {
-    return new Response(result.error || "Erro ao processar solicitação", { status: 500 });
+    return new Response(result.error || "Erro ao processar solicitação", {
+      status: 500,
+    });
   }
 
   redirect("/admin");

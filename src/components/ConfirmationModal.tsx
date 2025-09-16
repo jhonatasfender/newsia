@@ -60,20 +60,21 @@ export default function ConfirmationModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" data-cy="confirmation-modal">
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      data-cy="confirmation-modal"
+    >
       <div className="bg-white rounded-xl shadow-xl max-w-sm w-full transform transition-all">
         <div className="px-6 py-4 border-b border-gray-100">
           <h3 className="text-lg font-semibold text-gray-900">
             {config.title}
           </h3>
         </div>
-        
+
         <div className="px-6 py-4">
-          <p className="text-gray-600 leading-relaxed">
-            {config.message}
-          </p>
+          <p className="text-gray-600 leading-relaxed">{config.message}</p>
         </div>
-        
+
         <div className="px-6 py-4 bg-gray-50 rounded-b-xl flex gap-3 justify-end">
           <button
             onClick={onClose}

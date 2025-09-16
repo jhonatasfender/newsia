@@ -6,7 +6,7 @@ export async function POST(request: Request) {
   const {
     data: { session },
   } = await supabase.auth.getSession();
-  
+
   if (!session) {
     redirect("/login");
   }
@@ -51,9 +51,7 @@ export async function POST(request: Request) {
     published_at: publishNow ? new Date().toISOString() : null,
   };
 
-  const { error } = await supabase
-    .from("articles")
-    .insert(articleData);
+  const { error } = await supabase.from("articles").insert(articleData);
 
   if (error) {
     console.error("Erro ao criar artigo:", error);

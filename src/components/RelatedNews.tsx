@@ -6,9 +6,16 @@ type RelatedNewsProps = {
   categoryId: string | null;
 };
 
-export default async function RelatedNews({ articleId, categoryId }: RelatedNewsProps) {
+export default async function RelatedNews({
+  articleId,
+  categoryId,
+}: RelatedNewsProps) {
   const newsRepo = new NewsRepository();
-  const relatedArticles = await newsRepo.getRelatedNews(articleId, categoryId, 3);
+  const relatedArticles = await newsRepo.getRelatedNews(
+    articleId,
+    categoryId,
+    3,
+  );
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("pt-BR", {
@@ -37,7 +44,10 @@ export default async function RelatedNews({ articleId, categoryId }: RelatedNews
             excerpt={article.excerpt || ""}
             minutes={article.minutes || 5}
             date={formatDate(article.published_at!)}
-            imageSrc={article.image_url || "https://picsum.photos/seed/placeholder/800/450"}
+            imageSrc={
+              article.image_url ||
+              "https://picsum.photos/seed/placeholder/800/450"
+            }
             href={`/noticias/${article.slug}`}
           />
         ))}

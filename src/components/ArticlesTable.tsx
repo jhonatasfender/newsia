@@ -14,13 +14,13 @@ import type { ReactElement } from "react";
 export default async function ArticlesTable(): Promise<ReactElement> {
   const newsRepo = new NewsRepository();
   const articles = await newsRepo.getAllArticles();
-  
-  const rows: Row[] = articles.map(article => ({
+
+  const rows: Row[] = articles.map((article) => ({
     id: article.id,
     slug: article.slug,
     title: article.title,
     minutes: article.minutes,
-    published_at: article.published_at
+    published_at: article.published_at,
   }));
 
   return (

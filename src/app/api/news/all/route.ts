@@ -9,6 +9,9 @@ export async function GET() {
     return NextResponse.json(allArticles);
   } catch (error) {
     console.error("Erro ao carregar todas as notícias:", error);
-    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Erro interno do servidor" },
+      { status: 500 },
+    );
   }
 }

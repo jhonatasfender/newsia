@@ -12,15 +12,15 @@ type Params = { params: { slug: string } };
 export async function generateStaticParams() {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   );
-  
+
   const { data: articles } = await supabase
     .from("articles")
     .select("slug")
     .not("published_at", "is", null)
     .limit(50);
-  
+
   return (articles || []).map((article) => ({
     slug: article.slug,
   }));
@@ -29,7 +29,7 @@ export async function generateStaticParams() {
 export default async function ArticlePage({ params }: Params) {
   const newsRepo = new NewsRepository();
   const article = await newsRepo.getBySlug(params.slug);
-  
+
   if (!article) return notFound();
 
   const formatDate = (dateString: string) => {
@@ -43,7 +43,10 @@ export default async function ArticlePage({ params }: Params) {
   let editorData = null;
   if (article.body) {
     try {
-      if (typeof article.body === 'string' && article.body.trim().startsWith('{')) {
+      if (
+        typeof article.body === "string" &&
+        article.body.trim().startsWith("{")
+      ) {
         editorData = JSON.parse(article.body);
       } else {
         editorData = {
@@ -51,10 +54,10 @@ export default async function ArticlePage({ params }: Params) {
             {
               type: "paragraph",
               data: {
-                text: article.body
-              }
-            }
-          ]
+                text: article.body,
+              },
+            },
+          ],
         };
       }
     } catch (error) {
@@ -64,10 +67,10 @@ export default async function ArticlePage({ params }: Params) {
           {
             type: "paragraph",
             data: {
-              text: article.body
-            }
-          }
-        ]
+              text: article.body,
+            },
+          },
+        ],
       };
     }
   }
@@ -124,11 +127,11 @@ export default async function ArticlePage({ params }: Params) {
           {article.image_url && (
             <figure className="mb-6">
               <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden border border-black/10">
-                <Image 
-                  src={article.image_url} 
-                  alt={article.title} 
-                  fill 
-                  className="object-cover" 
+                <Image
+                  src={article.image_url}
+                  alt={article.title}
+                  fill
+                  className="object-cover"
                 />
               </div>
             </figure>
@@ -149,18 +152,15 @@ export default async function ArticlePage({ params }: Params) {
             </Link>
           </div>
 
-          <ShareButtons 
-            title={article.title} 
-            url={`/noticias/${article.slug}`} 
+          <ShareButtons
+            title={article.title}
+            url={`/noticias/${article.slug}`}
           />
         </div>
       </article>
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 py-12 lg:py-16">
-        <RelatedNews 
-          articleId={article.id}
-          categoryId={article.category_id}
-        />
+        <RelatedNews articleId={article.id} categoryId={article.category_id} />
       </section>
     </>
   );

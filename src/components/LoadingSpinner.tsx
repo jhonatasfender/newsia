@@ -7,11 +7,14 @@ type Props = {
   text?: string;
 };
 
-export default function LoadingSpinner({ size = "md", text }: Props): ReactElement {
+export default function LoadingSpinner({
+  size = "md",
+  text,
+}: Props): ReactElement {
   const sizeClasses = {
     sm: "w-4 h-4",
-    md: "w-6 h-6", 
-    lg: "w-8 h-8"
+    md: "w-6 h-6",
+    lg: "w-8 h-8",
   };
 
   return (
@@ -21,9 +24,7 @@ export default function LoadingSpinner({ size = "md", text }: Props): ReactEleme
         role="status"
         aria-label="Carregando"
       />
-      {text && (
-        <span className="text-sm text-gray-600">{text}</span>
-      )}
+      {text && <span className="text-sm text-gray-600">{text}</span>}
     </div>
   );
 }
