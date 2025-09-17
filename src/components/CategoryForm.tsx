@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { generateSlugFromTitle } from "@/lib/utils";
 
 type Category = {
   id: string;
@@ -32,26 +33,15 @@ export default function CategoryForm({ category, onSave, onCancel, loading = fal
     setErrors({});
   }, [category]);
 
-  const generateSlug = (text: string) => {
-    return text
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9\s-]/g, "")
-      .replace(/\s+/g, "-")
-      .replace(/-+/g, "-")
-      .replace(/^-|-$/g, "");
-  };
-
   const handleTitleChange = (value: string) => {
     setTitle(value);
     if (!category) {
-      setSlug(generateSlug(value));
+      setSlug(generateSlugFromTitle(value));
     }
   };
 
   const handleSlugChange = (value: string) => {
-    const formattedSlug = generateSlug(value);
+    const formattedSlug = generateSlugFromTitle(value);
     setSlug(formattedSlug);
   };
 

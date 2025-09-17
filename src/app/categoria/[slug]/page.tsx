@@ -5,8 +5,7 @@ import NewsCard from "@/components/NewsCard";
 type Params = { params: { slug: string } };
 
 export async function generateStaticParams() {
-  const newsRepo = new NewsRepository();
-  const categories = await newsRepo.getCategories();
+  const categories = await NewsRepository.getCategoriesForSSG();
 
   return categories.map((category) => ({
     slug: category.slug,
@@ -14,14 +13,13 @@ export async function generateStaticParams() {
 }
 
 export default async function CategoryPage({ params }: Params) {
-  const newsRepo = new NewsRepository();
-  const category = await newsRepo.getCategoryBySlug(params.slug);
+  const category = await NewsRepository.getCategoryBySlugForSSG(params.slug);
 
   if (!category) {
     return notFound();
   }
 
-  const articles = await newsRepo.getNewsByCategory(category.id, 50);
+  const articles = await NewsRepository.getNewsByCategoryForSSG(category.id, 50);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("pt-BR", {

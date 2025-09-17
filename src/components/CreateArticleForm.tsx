@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import EditorJsField from "@/components/EditorJsField";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { generateSlugFromTitle } from "@/lib/utils";
 
 type Category = {
   id: string;
@@ -21,6 +22,16 @@ export default function CreateArticleForm({ categories }: Props) {
 
   const handleSubmit = () => {
     setIsSubmitting(true);
+  };
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const title = e.target.value;
+    const slugInput = document.getElementById("slug") as HTMLInputElement;
+    if (slugInput && !slugInput.value) {
+      const generatedSlug = generateSlugFromTitle(title);
+      slugInput.value = generatedSlug;
+      slugInput.dispatchEvent(new Event('input', { bubbles: true }));
+    }
   };
 
   return (
@@ -77,6 +88,7 @@ export default function CreateArticleForm({ categories }: Props) {
           required
           className="mt-1 w-full h-10 px-3 rounded-md border border-black/15"
           data-cy="title-input"
+          onChange={handleTitleChange}
         />
       </div>
       <div>
@@ -87,7 +99,7 @@ export default function CreateArticleForm({ categories }: Props) {
           id="slug"
           name="slug"
           required
-          placeholder="url-amigavel-para-a-noticia"
+          placeholder="url-amigavel-para-a-noticia (será gerado automaticamente baseado no título)"
           className="mt-1 w-full h-10 px-3 rounded-md border border-black/15"
         />
       </div>

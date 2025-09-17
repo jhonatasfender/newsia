@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
+import { normalizeSlug } from "@/lib/utils";
 
 export async function GET() {
   try {
@@ -25,18 +26,13 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await supabaseServer();
-    const { title, slug } = await request.json();
+    const { title, slug: rawSlug } = await request.json();
 
-    if (!title || !slug) {
+    if (!title || !rawSlug) {
       return NextResponse.json({ error: "Título e slug são obrigatórios" }, { status: 400 });
     }
 
-    const slugRegex = /^[a-z0-9-]+$/;
-    if (!slugRegex.test(slug)) {
-      return NextResponse.json({ 
-        error: "Slug deve conter apenas letras minúsculas, números e hífens" 
-      }, { status: 400 });
-    }
+    const slug = normalizeSlug(rawSlug);
 
     const { data, error } = await supabase
       .from("categories")

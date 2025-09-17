@@ -1,29 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
+import { normalizeSlug } from "@/lib/utils";
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await supabaseServer();
-    const { title, slug } = await request.json();
+    const { title, slug: rawSlug } = await request.json();
 
-    if (!title || !slug) {
+    if (!title || !rawSlug) {
       return NextResponse.json({ error: "Título e slug são obrigatórios" }, { status: 400 });
     }
 
-    const slugRegex = /^[a-z0-9-]+$/;
-    if (!slugRegex.test(slug)) {
-      return NextResponse.json({ 
-        error: "Slug deve conter apenas letras minúsculas, números e hífens" 
-      }, { status: 400 });
-    }
+    const slug = normalizeSlug(rawSlug);
 
     const { data, error } = await supabase
       .from("categories")
       .update({ title, slug })
-      .eq("id", params.id)
+      .eq("id", id)
       .select("id, slug, title, created_at")
       .single();
 
@@ -47,15 +44,16 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await supabaseServer();
 
     const { data: articles, error: articlesError } = await supabase
       .from("articles")
       .select("id")
-      .eq("category_id", params.id)
+      .eq("category_id", id)
       .limit(1);
 
     if (articlesError) {
@@ -72,7 +70,7 @@ export async function DELETE(
     const { error } = await supabase
       .from("categories")
       .delete()
-      .eq("id", params.id);
+      .eq("id", id);
 
     if (error) {
       if (error.code === "PGRST116") {

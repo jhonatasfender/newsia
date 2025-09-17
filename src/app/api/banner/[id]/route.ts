@@ -3,9 +3,10 @@ import { supabaseServerWithCookies } from "@/lib/supabase/server";
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await supabaseServerWithCookies();
     const { title, subtitle, image_url, is_active } = await request.json();
 
@@ -17,13 +18,13 @@ export async function PUT(
       await supabase
         .from("banner")
         .update({ is_active: false })
-        .neq("id", params.id);
+        .neq("id", id);
     }
 
     const { data, error } = await supabase
       .from("banner")
       .update({ title, subtitle, image_url, is_active })
-      .eq("id", params.id)
+      .eq("id", id)
       .select("id, title, subtitle, image_url, is_active, created_at, updated_at")
       .single();
 
@@ -47,15 +48,16 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await supabaseServerWithCookies();
 
     const { error } = await supabase
       .from("banner")
       .delete()
-      .eq("id", params.id);
+      .eq("id", id);
 
     if (error) {
       if (error.code === "PGRST116") {

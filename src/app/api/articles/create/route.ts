@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabase/server";
+import { normalizeSlug } from "@/lib/utils";
 
 export async function POST(request: Request) {
   const supabase = await supabaseServer();
@@ -13,7 +14,7 @@ export async function POST(request: Request) {
 
   const formData = await request.formData();
   const title = String(formData.get("title") || "");
-  const slug = String(formData.get("slug") || "");
+  const rawSlug = String(formData.get("slug") || "");
   const excerpt = String(formData.get("excerpt") || "");
   const minutes = formData.get("minutes")
     ? Number(formData.get("minutes"))
@@ -26,9 +27,11 @@ export async function POST(request: Request) {
   if (!title.trim()) {
     return new Response("Título é obrigatório", { status: 400 });
   }
-  if (!slug.trim()) {
+  if (!rawSlug.trim()) {
     return new Response("Slug é obrigatório", { status: 400 });
   }
+
+  const slug = normalizeSlug(rawSlug);
 
   const { data: existingArticle } = await supabase
     .from("articles")

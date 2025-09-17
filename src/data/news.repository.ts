@@ -1,4 +1,5 @@
 import { supabaseServer } from "@/lib/supabase/server";
+import { createClient } from "@supabase/supabase-js";
 
 export type NewsCategory = {
   id: string;
@@ -27,6 +28,134 @@ export type NewsArticle = {
 };
 
 export class NewsRepository {
+  static async getCategoriesForSSG(): Promise<NewsCategory[]> {
+    try {
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      );
+
+      const { data, error } = await supabase
+        .from("categories")
+        .select("id, slug, title, created_at")
+        .order("title");
+
+      if (error) {
+        console.error("Erro ao buscar categorias:", error);
+        return [];
+      }
+
+      return data || [];
+    } catch (error) {
+      console.error("Erro inesperado ao buscar categorias:", error);
+      return [];
+    }
+  }
+
+  static async getPublishedArticlesForSSG(limit: number = 50): Promise<{ slug: string }[]> {
+    try {
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      );
+
+      const { data, error } = await supabase
+        .from("articles")
+        .select("slug")
+        .not("published_at", "is", null)
+        .limit(limit);
+
+      if (error) {
+        console.error("Erro ao buscar artigos:", error);
+        return [];
+      }
+
+      return data || [];
+    } catch (error) {
+      console.error("Erro inesperado ao buscar artigos:", error);
+      return [];
+    }
+  }
+
+  static async getCategoryBySlugForSSG(slug: string): Promise<NewsCategory | null> {
+    try {
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      );
+
+      const { data, error } = await supabase
+        .from("categories")
+        .select("id, slug, title, created_at")
+        .eq("slug", slug)
+        .single();
+
+      if (error) {
+        if (error.code === "PGRST116") {
+          return null;
+        }
+        console.error("Erro ao buscar categoria:", error);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Erro inesperado ao buscar categoria:", error);
+      return null;
+    }
+  }
+
+  static async getNewsByCategoryForSSG(categoryId: string, limit: number = 50): Promise<NewsArticle[]> {
+    try {
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      );
+
+      const { data, error } = await supabase
+        .from("articles")
+        .select(`
+          id,
+          category_id,
+          slug,
+          title,
+          excerpt,
+          body,
+          image_url,
+          minutes,
+          published_at,
+          created_at,
+          updated_at,
+          categories:category_id (
+            id,
+            title,
+            slug
+          )
+        `)
+        .eq("category_id", categoryId)
+        .not("published_at", "is", null)
+        .order("published_at", { ascending: false })
+        .limit(limit);
+
+      if (error) {
+        console.error("Erro ao buscar notícias por categoria:", error);
+        return [];
+      }
+
+      const transformedData = (data || []).map(article => ({
+        ...article,
+        categories: Array.isArray(article.categories) && article.categories.length > 0 
+          ? article.categories[0] 
+          : null
+      }));
+
+      return transformedData;
+    } catch (error) {
+      console.error("Erro inesperado ao buscar notícias por categoria:", error);
+      return [];
+    }
+  }
+
   async listPublished(limit: number = 20): Promise<NewsArticle[]> {
     const supabase = await supabaseServer();
     const { data, error } = await supabase

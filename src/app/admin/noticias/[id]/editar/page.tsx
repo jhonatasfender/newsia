@@ -4,6 +4,7 @@ import Image from "next/image";
 import type { OutputData } from "@editorjs/editorjs";
 import EditorJsField from "@/components/EditorJsField";
 import type { Metadata } from "next";
+import { normalizeSlug } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Editar Notícia - Impacto IA",
@@ -17,7 +18,7 @@ async function updateArticle(formData: FormData) {
   const supabase = await supabaseServer();
   const id = String(formData.get("id") || "");
   const title = String(formData.get("title") || "");
-  const slug = String(formData.get("slug") || "");
+  const rawSlug = String(formData.get("slug") || "");
   const excerpt = String(formData.get("excerpt") || "");
   const minutes = formData.get("minutes")
     ? Number(formData.get("minutes"))
@@ -25,6 +26,8 @@ async function updateArticle(formData: FormData) {
   const body = String(formData.get("body") || "");
   const imageUrl = String(formData.get("image_url") || "");
   const categoryId = String(formData.get("category_id") || "");
+
+  const slug = normalizeSlug(rawSlug);
 
   await supabase
     .from("articles")

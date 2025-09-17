@@ -4,7 +4,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { unstable_noStore as noStore } from "next/cache";
 import { NewsRepository } from "@/data/news.repository";
-import { getActiveBanner } from "@/hooks/useBanner";
+import { getActiveBannerForSSG } from "@/hooks/useBanner";
 import type { ReactElement } from "react";
 
 async function signOut() {
@@ -21,9 +21,8 @@ export default async function TopNav(): Promise<ReactElement> {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const newsRepo = new NewsRepository();
-  const categories = await newsRepo.getCategories();
-  const banner = await getActiveBanner();
+  const categories = await NewsRepository.getCategoriesForSSG();
+  const banner = await getActiveBannerForSSG();
 
   return (
     <header className="w-full bg-black text-white sticky top-0 z-50">

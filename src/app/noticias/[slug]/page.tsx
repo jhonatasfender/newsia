@@ -5,31 +5,22 @@ import { NewsRepository } from "@/data/news.repository";
 import ShareButtons from "@/components/ShareButtons";
 import RelatedNews from "@/components/RelatedNews";
 import EditorJsRenderer from "@/components/EditorJsRenderer";
-import { createClient } from "@supabase/supabase-js";
 
 type Params = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  );
+  const articles = await NewsRepository.getPublishedArticlesForSSG(50);
 
-  const { data: articles } = await supabase
-    .from("articles")
-    .select("slug")
-    .not("published_at", "is", null)
-    .limit(50);
-
-  return (articles || []).map((article) => ({
-    slug: article.slug,
+  return articles.map((article) => ({
+    slug: encodeURIComponent(article.slug),
   }));
 }
 
 export default async function ArticlePage({ params }: Params) {
   const newsRepo = new NewsRepository();
   const { slug } = await params;
-  const article = await newsRepo.getBySlug(slug);
+  const decodedSlug = decodeURIComponent(slug);
+  const article = await newsRepo.getBySlug(decodedSlug);
 
   if (!article) return notFound();
 
