@@ -45,10 +45,16 @@ export default async function EditArticlePage({ params }: Params) {
 
   let initialBlocks: OutputData | undefined = undefined;
   try {
-    initialBlocks = data.body
-      ? (JSON.parse(data.body) as OutputData)
-      : undefined;
-  } catch {}
+    if (data.body) {
+      if (typeof data.body === "string") {
+        initialBlocks = JSON.parse(data.body) as OutputData;
+      } else if (typeof data.body === "object") {
+        initialBlocks = data.body as OutputData;
+      }
+    }
+  } catch (error) {
+    console.error("Erro ao processar body para edição:", error);
+  }
 
   return (
     <main className="min-h-screen">

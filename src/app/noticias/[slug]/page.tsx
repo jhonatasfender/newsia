@@ -36,31 +36,32 @@ export default async function ArticlePage({ params }: Params) {
   let editorData = null;
   if (article.body) {
     try {
-      if (
-        typeof article.body === "string" &&
-        article.body.trim().startsWith("{")
-      ) {
-        editorData = JSON.parse(article.body);
-      } else {
-        editorData = {
-          blocks: [
-            {
-              type: "paragraph",
-              data: {
-                text: article.body,
+      if (typeof article.body === "string") {
+        if (article.body.trim().startsWith("{")) {
+          editorData = JSON.parse(article.body);
+        } else {
+          editorData = {
+            blocks: [
+              {
+                type: "paragraph",
+                data: {
+                  text: article.body,
+                },
               },
-            },
-          ],
-        };
+            ],
+          };
+        }
+      } else if (typeof article.body === "object") {
+        editorData = article.body;
       }
     } catch (error) {
-      console.error("Erro ao fazer parse do conteúdo:", error);
+      console.error("Erro ao processar conteúdo:", error);
       editorData = {
         blocks: [
           {
             type: "paragraph",
             data: {
-              text: article.body,
+              text: typeof article.body === "string" ? article.body : "Conteúdo não disponível",
             },
           },
         ],

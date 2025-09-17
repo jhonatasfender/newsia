@@ -184,17 +184,18 @@ export default function EditorJsField({ initialData, hiddenInputId }: Props) {
             const el = document.getElementById(
               hiddenInputId,
             ) as HTMLInputElement | null;
-            if (el) el.value = JSON.stringify(d);
+            if (el) {
+              el.value = JSON.stringify(d);
+            }
           }}
         />
       </div>
 
-      {/* Campo hidden sincronizado desde o início */}
       <input
         type="hidden"
         id={hiddenInputId}
         name={hiddenInputId}
-        defaultValue={initialData ? JSON.stringify(initialData) : ""}
+        defaultValue={initialData ? JSON.stringify(initialData) : '{"time":0,"blocks":[],"version":"2.31.0"}'}
       />
 
       <p className="text-xs text-black/60">

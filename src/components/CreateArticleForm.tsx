@@ -20,8 +20,30 @@ export default function CreateArticleForm({ categories }: Props) {
   const [imageUrl, setImageUrl] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setIsSubmitting(true);
+    
+    try {
+      const formData = new FormData(e.currentTarget);
+      const response = await fetch("/api/articles/create", {
+        method: "POST",
+        body: formData,
+      });
+      
+      if (response.ok) {
+        window.location.href = "/admin";
+      } else {
+        const errorText = await response.text();
+        console.error("Erro ao criar artigo:", errorText);
+        alert(`Erro: ${errorText}`);
+        setIsSubmitting(false);
+      }
+    } catch (error) {
+      console.error("Erro na requisição:", error);
+      alert("Erro ao criar artigo");
+      setIsSubmitting(false);
+    }
   };
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,8 +58,6 @@ export default function CreateArticleForm({ categories }: Props) {
 
   return (
     <form
-      action="/api/articles/create"
-      method="POST"
       className="grid gap-3"
       onSubmit={handleSubmit}
     >

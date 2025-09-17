@@ -20,7 +20,20 @@ export async function POST(request: Request) {
   const minutes = formData.get("minutes")
     ? Number(formData.get("minutes"))
     : null;
-  const body = String(formData.get("body") || "");
+  
+  const rawBody = formData.get("body");
+  let body = null;
+  
+  if (rawBody) {
+    try {
+      const bodyString = String(rawBody);
+      const parsedBody = JSON.parse(bodyString);
+      body = parsedBody;
+    } catch (error) {
+      console.error("Error parsing body JSON:", error);
+      body = String(rawBody);
+    }
+  }
   const imageUrl = String(formData.get("image_url") || "");
   const categoryId = String(formData.get("category_id") || "");
   const publishNow = formData.get("publish_now") === "on";

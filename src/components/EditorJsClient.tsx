@@ -86,9 +86,15 @@ export default function EditorJsClient({
         data: initialData,
         autofocus: false,
         onReady: onReady,
-        async onChange(api) {
-          const saved = await api.saver.save();
-          onChange?.(saved);
+        onChange(api) {
+          setTimeout(async () => {
+            try {
+              const saved = await api.saver.save();
+              onChange?.(saved);
+            } catch (error) {
+              console.error("EditorJS onChange error:", error);
+            }
+          }, 100);
         },
       });
       ref.current = instance;
