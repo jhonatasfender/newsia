@@ -53,7 +53,7 @@ export default async function CategoryPage({ params }: Params) {
             {articles.map((article) => (
               <NewsCard
                 key={article.id}
-                category={article.categories?.title || "Geral"}
+                category={category.title}
                 categoryColor="bg-[color:var(--color-primary)]"
                 title={article.title}
                 excerpt={article.excerpt || ""}
