@@ -3,6 +3,12 @@ import { supabaseServer } from "@/lib/supabase/server";
 import Image from "next/image";
 import type { OutputData } from "@editorjs/editorjs";
 import EditorJsField from "@/components/EditorJsField";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Editar Notícia - Impacto IA",
+  description: "Editar notícia no painel administrativo",
+};
 
 type Params = { params: Promise<{ id: string }> };
 

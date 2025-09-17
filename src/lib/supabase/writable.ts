@@ -11,15 +11,8 @@ export async function supabaseWritable() {
       getAll() {
         return cookieStore.getAll();
       },
-      setAll(cookiesToSet) {
-        for (const cookie of cookiesToSet) {
-          const { name, value, options } = cookie as unknown as {
-            name: string;
-            value: string;
-            options: Record<string, unknown>;
-          };
-          cookieStore.set({ name, value, ...options });
-        }
+      setAll() {
+        console.log("Tentativa de modificar cookies em writable ignorada");
       },
     },
   });

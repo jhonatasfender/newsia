@@ -8,7 +8,7 @@ export default function SiteFooter(): ReactElement {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
             <div className="text-xl font-bold text-[color:var(--color-primary)]">
-              IA News
+              Impacto IA
             </div>
             <p className="mt-2 text-white/80 max-w-md">
               Sua fonte confiável para as últimas notícias e análises sobre
@@ -57,7 +57,7 @@ export default function SiteFooter(): ReactElement {
         </div>
         <div className="mt-10 border-t border-white/10 pt-6 text-sm flex flex-col sm:flex-row items-center justify-between gap-2">
           <div className="text-white/70">
-            © 2024 IA News. Todos os direitos reservados.
+            © 2025 Impacto IA. Todos os direitos reservados.
           </div>
           <div className="flex items-center gap-4 text-white/70">
             <Link href="#">Privacidade</Link>

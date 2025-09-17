@@ -1,6 +1,6 @@
 "use client";
 
-type ActionType = "publish" | "unpublish" | "delete";
+type ActionType = "publish" | "unpublish" | "delete" | "delete-category";
 
 type Props = {
   isOpen: boolean;
@@ -39,6 +39,13 @@ export default function ConfirmationModal({
         return {
           title: "Excluir Notícia",
           message: `Tem certeza que deseja excluir "${articleTitle}"? Esta ação não pode ser desfeita.`,
+          confirmText: "Excluir",
+          confirmColor: "bg-red-500 hover:bg-red-600",
+        };
+      case "delete-category":
+        return {
+          title: "Excluir Categoria",
+          message: `Tem certeza que deseja excluir a categoria "${articleTitle}"? Esta ação não pode ser desfeita.`,
           confirmText: "Excluir",
           confirmColor: "bg-red-500 hover:bg-red-600",
         };

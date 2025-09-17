@@ -1,14 +1,15 @@
 import Link from "next/link";
+import Image from "next/image";
 import { supabaseServer } from "@/lib/supabase/server";
-import { supabaseWritable } from "@/lib/supabase/writable";
 import { redirect } from "next/navigation";
 import { unstable_noStore as noStore } from "next/cache";
 import { NewsRepository } from "@/data/news.repository";
+import { getActiveBanner } from "@/hooks/useBanner";
 import type { ReactElement } from "react";
 
 async function signOut() {
   "use server";
-  const supabase = await supabaseWritable();
+  const supabase = await supabaseServer();
   await supabase.auth.signOut();
   redirect("/login");
 }
@@ -22,6 +23,7 @@ export default async function TopNav(): Promise<ReactElement> {
 
   const newsRepo = new NewsRepository();
   const categories = await newsRepo.getCategories();
+  const banner = await getActiveBanner();
 
   return (
     <header className="w-full bg-black text-white sticky top-0 z-50">
@@ -29,9 +31,16 @@ export default async function TopNav(): Promise<ReactElement> {
         {/* Brand */}
         <Link
           href="/"
-          className="text-lg font-bold text-[color:var(--color-primary)]"
+          className="flex items-center gap-2 text-lg font-bold text-[color:var(--color-primary)]"
         >
-          IA News
+          <Image
+            src="/logo.png"
+            alt={`${banner.title} Logo`}
+            width={32}
+            height={32}
+            className="w-8 h-8"
+          />
+          Impacto IA
         </Link>
 
         {/* Center menu */}
@@ -65,7 +74,7 @@ export default async function TopNav(): Promise<ReactElement> {
 
           {user ? (
             <form action={signOut}>
-              <button className="h-9 px-3 rounded-md bg-white text-black text-sm font-semibold">
+              <button className="h-9 px-3 rounded-md bg-white text-black text-sm font-semibold cursor-pointer">
                 Sair
               </button>
             </form>

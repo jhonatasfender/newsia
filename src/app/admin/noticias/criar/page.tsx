@@ -1,6 +1,12 @@
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabase/server";
 import CreateArticleForm from "@/components/CreateArticleForm";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Criar Notícia - Impacto IA",
+  description: "Criar nova notícia no painel administrativo",
+};
 
 export default async function CreateArticlePage() {
   const supabase = await supabaseServer();

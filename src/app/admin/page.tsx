@@ -1,6 +1,13 @@
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabase/server";
 import ArticlesTable from "@/components/ArticlesTable";
+import AdminClient from "@/components/AdminClient";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Admin - Impacto IA",
+  description: "Painel administrativo do Impacto IA",
+};
 
 export default async function AdminHome() {
   const supabase = await supabaseServer();
@@ -24,12 +31,15 @@ export default async function AdminHome() {
               Listagem de matérias cadastradas
             </p>
           </div>
-          <a
-            href="/admin/noticias/criar"
-            className="h-10 px-4 rounded-md bg-black text-white inline-flex items-center"
-          >
-            Criar Notícia
-          </a>
+          <div className="flex gap-3">
+            <AdminClient />
+            <a
+              href="/admin/noticias/criar"
+              className="h-10 px-4 rounded-md bg-black text-white inline-flex items-center"
+            >
+              Criar Notícia
+            </a>
+          </div>
         </div>
       </div>
       <ArticlesTable />

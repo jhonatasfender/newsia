@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useRouter } from "next/navigation";
@@ -10,30 +10,51 @@ import type { ReactElement } from "react";
 export default function AuthClient(): ReactElement {
   const router = useRouter();
   const supabase = supabaseBrowser();
+  const hasSetupListener = useRef(false);
 
   useEffect(() => {
+    // Evita criar múltiplos listeners
+    if (hasSetupListener.current) return;
+    
+    hasSetupListener.current = true;
+    
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_IN") {
         supabase.auth.getSession().then(async ({ data }) => {
           const s = data.session;
           if (s?.access_token && s?.refresh_token) {
-            await fetch("/api/auth/set", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                access_token: s.access_token,
-                refresh_token: s.refresh_token,
-              }),
-            });
+            try {
+              const response = await fetch("/api/auth/set", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  access_token: s.access_token,
+                  refresh_token: s.refresh_token,
+                }),
+              });
+              
+              if (response.ok) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                router.replace("/admin");
+              } else {
+                console.error("Erro ao definir sessão:", await response.text());
+              }
+            } catch (error) {
+              console.error("Erro ao definir sessão:", error);
+            }
+          } else {
+            router.replace("/admin");
           }
-          router.replace("/admin");
         });
       }
     });
+    
     return () => {
       sub.subscription.unsubscribe();
+      hasSetupListener.current = false;
     };
-  }, [router, supabase]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Auth

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import TopNav from "@/components/TopNav";
 import SiteFooter from "@/components/SiteFooter";
+import { getActiveBanner } from "@/hooks/useBanner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,10 +15,21 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "IA News — Inteligência Artificial e Sociedade",
-  description: "Análises sobre tecnologia, emprego e sociedade.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  try {
+    const banner = await getActiveBanner();
+    return {
+      title: banner.title,
+      description: banner.subtitle || "Inteligência Artificial e Sociedade",
+    };
+  } catch (error) {
+    console.error("Erro ao buscar banner para metadata:", error);
+    return {
+      title: "Impacto IA",
+      description: "Inteligência Artificial e Sociedade",
+    };
+  }
+}
 
 export default function RootLayout({
   children,
