@@ -7,6 +7,7 @@ type Row = {
   title: string;
   minutes: number | null;
   published_at: string | null;
+  author: string | null;
 };
 
 import type { ReactElement } from "react";
@@ -21,6 +22,7 @@ export default async function ArticlesTable(): Promise<ReactElement> {
     title: article.title,
     minutes: article.minutes,
     published_at: article.published_at,
+    author: article.author,
   }));
 
   return (
@@ -31,6 +33,7 @@ export default async function ArticlesTable(): Promise<ReactElement> {
             <tr>
               <th className="text-left p-3">Título</th>
               <th className="text-left p-3 hidden sm:table-cell">Slug</th>
+              <th className="text-left p-3 hidden md:table-cell">Autor</th>
               <th className="text-left p-3 hidden md:table-cell">Status</th>
               <th className="text-left p-3 hidden md:table-cell">
                 Publicado em
@@ -45,6 +48,9 @@ export default async function ArticlesTable(): Promise<ReactElement> {
                 <td className="p-3">{r.title}</td>
                 <td className="p-3 hidden sm:table-cell text-black/70">
                   {r.slug}
+                </td>
+                <td className="p-3 hidden md:table-cell text-black/70">
+                  {r.author || "—"}
                 </td>
                 <td className="p-3 hidden md:table-cell">
                   {r.published_at ? (
@@ -76,7 +82,7 @@ export default async function ArticlesTable(): Promise<ReactElement> {
             ))}
             {rows.length === 0 && (
               <tr>
-                <td className="p-6 text-center text-black/60" colSpan={6}>
+                <td className="p-6 text-center text-black/60" colSpan={7}>
                   Nenhum artigo encontrado.
                 </td>
               </tr>

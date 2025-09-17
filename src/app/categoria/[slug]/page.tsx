@@ -12,6 +12,7 @@ export async function generateStaticParams() {
   }));
 }
 
+
 export default async function CategoryPage({ params }: Params) {
   const category = await NewsRepository.getCategoryBySlugForSSG(params.slug);
 

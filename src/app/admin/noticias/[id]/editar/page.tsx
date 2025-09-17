@@ -27,6 +27,10 @@ async function updateArticle(formData: FormData) {
   const imageUrl = String(formData.get("image_url") || "");
   const categoryId = String(formData.get("category_id") || "");
 
+  if (!categoryId.trim()) {
+    throw new Error("Categoria é obrigatória");
+  }
+
   const slug = normalizeSlug(rawSlug);
 
   await supabase
@@ -38,7 +42,7 @@ async function updateArticle(formData: FormData) {
       minutes,
       body,
       image_url: imageUrl.trim() || null,
-      category_id: categoryId || null,
+      category_id: categoryId.trim(),
     })
     .eq("id", id);
   redirect("/admin");
@@ -154,10 +158,10 @@ export default async function EditArticlePage({ params }: Params) {
             <select
               id="category_id"
               name="category_id"
+              required
               defaultValue={data.category_id ?? ""}
               className="mt-1 w-full h-10 px-3 rounded-md border border-black/15"
             >
-              <option value="">Selecione uma categoria (opcional)</option>
               {categories?.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.title}

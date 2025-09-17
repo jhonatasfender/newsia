@@ -16,6 +16,7 @@ export async function POST(request: Request) {
   const title = String(formData.get("title") || "");
   const rawSlug = String(formData.get("slug") || "");
   const excerpt = String(formData.get("excerpt") || "");
+  const author = String(formData.get("author") || "");
   const minutes = formData.get("minutes")
     ? Number(formData.get("minutes"))
     : null;
@@ -29,6 +30,12 @@ export async function POST(request: Request) {
   }
   if (!rawSlug.trim()) {
     return new Response("Slug é obrigatório", { status: 400 });
+  }
+  if (!author.trim()) {
+    return new Response("Autor é obrigatório", { status: 400 });
+  }
+  if (!categoryId.trim()) {
+    return new Response("Categoria é obrigatória", { status: 400 });
   }
 
   const slug = normalizeSlug(rawSlug);
@@ -50,7 +57,8 @@ export async function POST(request: Request) {
     minutes,
     body: body || null,
     image_url: imageUrl.trim() || null,
-    category_id: categoryId || null,
+    category_id: categoryId.trim(),
+    author: author.trim(),
     published_at: publishNow ? new Date().toISOString() : null,
   };
 

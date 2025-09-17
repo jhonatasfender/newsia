@@ -20,6 +20,7 @@ export type NewsArticle = {
   published_at: string | null;
   created_at: string;
   updated_at: string;
+  author: string | null;
   categories?: {
     id: string;
     title: string;
@@ -126,6 +127,7 @@ export class NewsRepository {
           published_at,
           created_at,
           updated_at,
+          author,
           categories:category_id (
             id,
             title,

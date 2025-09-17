@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import TopNav from "@/components/TopNav";
 import SiteFooter from "@/components/SiteFooter";
-import { getActiveBannerForSSG } from "@/hooks/useBanner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,19 +15,10 @@ const geistMono = Geist_Mono({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  try {
-    const banner = await getActiveBannerForSSG();
-    return {
-      title: banner.title,
-      description: banner.subtitle || "Inteligência Artificial e Sociedade",
-    };
-  } catch (error) {
-    console.error("Erro ao buscar banner para metadata:", error);
-    return {
-      title: "Impacto IA",
-      description: "Inteligência Artificial e Sociedade",
-    };
-  }
+  return {
+    title: "Impacto IA",
+    description: "Inteligência Artificial e Sociedade",
+  };
 }
 
 export default function RootLayout({

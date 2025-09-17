@@ -117,16 +117,29 @@ export default function CreateArticleForm({ categories }: Props) {
         />
       </div>
       <div>
+        <label className="text-sm font-medium" htmlFor="author">
+          Autor/Redator
+        </label>
+        <input
+          id="author"
+          name="author"
+          required
+          placeholder="Nome do autor da notícia"
+          className="mt-1 w-full h-10 px-3 rounded-md border border-black/15"
+          data-cy="author-input"
+        />
+      </div>
+      <div>
         <label className="text-sm font-medium" htmlFor="category_id">
           Categoria
         </label>
         <select
           id="category_id"
           name="category_id"
+          required
           className="mt-1 w-full h-10 px-3 rounded-md border border-black/15"
           data-cy="category-select"
         >
-          <option value="">Selecione uma categoria (opcional)</option>
           {categories.map((category) => (
             <option key={category.id} value={category.id}>
               {category.title}

@@ -16,6 +16,7 @@ export async function generateStaticParams() {
   }));
 }
 
+
 export default async function ArticlePage({ params }: Params) {
   const newsRepo = new NewsRepository();
   const { slug } = await params;
@@ -103,6 +104,7 @@ export default async function ArticlePage({ params }: Params) {
               <span className="text-black/60">
                 {formatDate(article.published_at!)}{" "}
                 {article.minutes ? `• ${article.minutes} min` : ""}
+                {article.author ? ` • Por ${article.author}` : ""}
               </span>
             </div>
             <h1 className="text-3xl font-extrabold leading-tight">
