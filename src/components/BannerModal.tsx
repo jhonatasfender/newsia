@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import BannerForm from "./BannerForm";
 
 type Banner = {
@@ -210,9 +211,11 @@ export default function BannerModal({ isOpen, onClose }: Props) {
                       <div className="flex-1">
                         {b.image_url && (
                           <div className="mb-3">
-                            <img
+                            <Image
                               src={b.image_url}
                               alt={b.title}
+                              width={200}
+                              height={96}
                               className="w-full h-24 object-cover rounded-md"
                               onError={(e) => {
                                 e.currentTarget.style.display = 'none';
@@ -313,9 +316,11 @@ export default function BannerModal({ isOpen, onClose }: Props) {
                   <h4 className="font-medium text-gray-900 mb-2">Preview do Banner:</h4>
                   {banner.image_url && (
                     <div className="mb-3">
-                      <img
+                      <Image
                         src={banner.image_url}
                         alt="Preview do banner"
+                        width={400}
+                        height={128}
                         className="w-full h-32 object-cover rounded-md"
                         onError={(e) => {
                           e.currentTarget.style.display = 'none';

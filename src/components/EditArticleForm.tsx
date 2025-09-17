@@ -4,6 +4,7 @@ import { useState } from "react";
 import EditorJsField from "@/components/EditorJsField";
 import ImageUpload from "@/components/ImageUpload";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import type { OutputData } from "@editorjs/editorjs";
 
 type Category = {
   id: string;
@@ -26,7 +27,7 @@ type Article = {
 type Props = {
   article: Article;
   categories: Category[];
-  initialBlocks: any;
+  initialBlocks: OutputData | undefined;
 };
 
 export default function EditArticleForm({ article, categories, initialBlocks }: Props) {

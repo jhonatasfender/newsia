@@ -3,7 +3,6 @@ import { supabaseServer } from "@/lib/supabase/server";
 import type { OutputData } from "@editorjs/editorjs";
 import EditArticleForm from "@/components/EditArticleForm";
 import type { Metadata } from "next";
-import { normalizeSlug } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Editar Notícia - Impacto IA",
@@ -12,42 +11,6 @@ export const metadata: Metadata = {
 
 type Params = { params: Promise<{ id: string }> };
 
-async function updateArticle(formData: FormData) {
-  "use server";
-  const supabase = await supabaseServer();
-  const id = String(formData.get("id") || "");
-  const title = String(formData.get("title") || "");
-  const rawSlug = String(formData.get("slug") || "");
-  const excerpt = String(formData.get("excerpt") || "");
-  const author = String(formData.get("author") || "");
-  const minutes = formData.get("minutes")
-    ? Number(formData.get("minutes"))
-    : null;
-  const body = String(formData.get("body") || "");
-  const imageUrl = String(formData.get("image_url") || "");
-  const categoryId = String(formData.get("category_id") || "");
-
-  if (!categoryId.trim()) {
-    throw new Error("Categoria é obrigatória");
-  }
-
-  const slug = normalizeSlug(rawSlug);
-
-  await supabase
-    .from("articles")
-    .update({
-      title,
-      slug,
-      excerpt: excerpt.trim() || null,
-      author: author.trim(),
-      minutes,
-      body,
-      image_url: imageUrl.trim() || null,
-      category_id: categoryId.trim(),
-    })
-    .eq("id", id);
-  redirect("/admin");
-}
 
 export default async function EditArticlePage({ params }: Params) {
   const supabase = await supabaseServer();
