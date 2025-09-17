@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import EditorJsField from "@/components/EditorJsField";
-import LoadingSpinner from "@/components/LoadingSpinner";
 import ImageUpload from "@/components/ImageUpload";
-import { generateSlugFromTitle } from "@/lib/utils";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 type Category = {
   id: string;
@@ -12,35 +11,41 @@ type Category = {
   slug: string;
 };
 
-type Props = {
-  categories: Category[];
+type Article = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  body: string | null;
+  image_url: string | null;
+  minutes: number | null;
+  category_id: string | null;
+  author: string | null;
 };
 
-export default function CreateArticleForm({ categories }: Props) {
-  const [imageUrl, setImageUrl] = useState("");
+type Props = {
+  article: Article;
+  categories: Category[];
+  initialBlocks: any;
+};
+
+export default function EditArticleForm({ article, categories, initialBlocks }: Props) {
+  const [imageUrl, setImageUrl] = useState(article.image_url || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = () => {
     setIsSubmitting(true);
   };
 
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const title = e.target.value;
-    const slugInput = document.getElementById("slug") as HTMLInputElement;
-    if (slugInput && !slugInput.value) {
-      const generatedSlug = generateSlugFromTitle(title);
-      slugInput.value = generatedSlug;
-      slugInput.dispatchEvent(new Event('input', { bubbles: true }));
-    }
-  };
-
   return (
     <form
-      action="/api/articles/create"
+      action={`/api/articles/${article.id}/update`}
       method="POST"
       className="grid gap-3"
       onSubmit={handleSubmit}
     >
+      <input type="hidden" name="id" value={article.id} />
+      
       <div>
         <label className="text-sm font-medium">
           Imagem do banner
@@ -56,6 +61,7 @@ export default function CreateArticleForm({ categories }: Props) {
           value={imageUrl}
         />
       </div>
+      
       <div>
         <label className="text-sm font-medium" htmlFor="title">
           Título
@@ -63,12 +69,12 @@ export default function CreateArticleForm({ categories }: Props) {
         <input
           id="title"
           name="title"
+          defaultValue={article.title}
           required
           className="mt-1 w-full h-10 px-3 rounded-md border border-black/15"
-          data-cy="title-input"
-          onChange={handleTitleChange}
         />
       </div>
+      
       <div>
         <label className="text-sm font-medium" htmlFor="slug">
           Slug
@@ -76,11 +82,12 @@ export default function CreateArticleForm({ categories }: Props) {
         <input
           id="slug"
           name="slug"
+          defaultValue={article.slug}
           required
-          placeholder="url-amigavel-para-a-noticia (será gerado automaticamente baseado no título)"
           className="mt-1 w-full h-10 px-3 rounded-md border border-black/15"
         />
       </div>
+      
       <div>
         <label className="text-sm font-medium" htmlFor="excerpt">
           Resumo
@@ -88,12 +95,13 @@ export default function CreateArticleForm({ categories }: Props) {
         <textarea
           id="excerpt"
           name="excerpt"
+          defaultValue={article.excerpt ?? ""}
           placeholder="Breve descrição da notícia..."
           rows={3}
           className="mt-1 w-full px-3 py-2 rounded-md border border-black/15 resize-none"
-          data-cy="excerpt-input"
         />
       </div>
+      
       <div>
         <label className="text-sm font-medium" htmlFor="author">
           Autor/Redator
@@ -101,12 +109,13 @@ export default function CreateArticleForm({ categories }: Props) {
         <input
           id="author"
           name="author"
+          defaultValue={article.author ?? ""}
           required
           placeholder="Nome do autor da notícia"
           className="mt-1 w-full h-10 px-3 rounded-md border border-black/15"
-          data-cy="author-input"
         />
       </div>
+      
       <div>
         <label className="text-sm font-medium" htmlFor="category_id">
           Categoria
@@ -115,59 +124,49 @@ export default function CreateArticleForm({ categories }: Props) {
           id="category_id"
           name="category_id"
           required
+          defaultValue={article.category_id ?? ""}
           className="mt-1 w-full h-10 px-3 rounded-md border border-black/15"
-          data-cy="category-select"
         >
-          {categories.map((category) => (
+          {categories?.map((category) => (
             <option key={category.id} value={category.id}>
               {category.title}
             </option>
           ))}
         </select>
       </div>
+      
       <div>
         <label className="text-sm font-medium">Conteúdo</label>
-        <EditorJsField hiddenInputId="body" />
+        <EditorJsField initialData={initialBlocks} hiddenInputId="body" />
       </div>
+      
       <div>
         <label className="text-sm font-medium" htmlFor="minutes">
-          Minutos de leitura
+          Minutos
         </label>
         <input
           id="minutes"
           name="minutes"
           type="number"
+          defaultValue={article.minutes ?? ""}
           placeholder="5"
           className="mt-1 w-full h-10 px-3 rounded-md border border-black/15"
-          data-cy="minutes-input"
         />
       </div>
-      <div className="flex items-center gap-2">
-        <input
-          id="publish_now"
-          name="publish_now"
-          type="checkbox"
-          className="h-4 w-4 rounded border-black/15"
-          data-cy="publish-now-checkbox"
-        />
-        <label className="text-sm font-medium" htmlFor="publish_now">
-          Publicar imediatamente
-        </label>
-      </div>
+      
       <div className="mt-2 flex gap-3">
         <button
           className="h-10 px-4 rounded-md bg-black text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           type="submit"
-          data-cy="submit-button"
           disabled={isSubmitting}
         >
           {isSubmitting ? (
             <>
               <LoadingSpinner size="sm" />
-              Criando...
+              Salvando...
             </>
           ) : (
-            "Criar Notícia"
+            "Salvar Alterações"
           )}
         </button>
         <a

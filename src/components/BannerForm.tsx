@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import ImageUpload from "./ImageUpload";
 
 type Banner = {
   id: string;
@@ -109,20 +110,16 @@ export default function BannerForm({ banner, onSave, onCancel, loading = false }
       </div>
 
       <div>
-        <label htmlFor="image_url" className="block text-sm font-medium text-gray-700 mb-1">
-          URL da Imagem
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Imagem do Banner
         </label>
-        <input
-          type="url"
-          id="image_url"
+        <ImageUpload
           value={imageUrl}
-          onChange={(e) => setImageUrl(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black/20"
-          placeholder="https://exemplo.com/imagem.jpg"
-          disabled={loading}
+          onChange={setImageUrl}
+          placeholder="Selecione uma imagem para o banner..."
         />
         <p className="mt-1 text-xs text-gray-500">
-          URL da imagem que aparecerá no banner do site
+          Imagem que aparecerá no banner do site
         </p>
       </div>
 

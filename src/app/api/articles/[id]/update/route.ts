@@ -1,0 +1,80 @@
+import { redirect } from "next/navigation";
+import { supabaseServer } from "@/lib/supabase/server";
+import { normalizeSlug } from "@/lib/utils";
+
+export async function POST(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const supabase = await supabaseServer();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    redirect("/login");
+  }
+
+  const { id } = await params;
+  const formData = await request.formData();
+  const title = String(formData.get("title") || "");
+  const rawSlug = String(formData.get("slug") || "");
+  const excerpt = String(formData.get("excerpt") || "");
+  const author = String(formData.get("author") || "");
+  const minutes = formData.get("minutes")
+    ? Number(formData.get("minutes"))
+    : null;
+  const body = String(formData.get("body") || "");
+  const imageUrl = String(formData.get("image_url") || "");
+  const categoryId = String(formData.get("category_id") || "");
+
+  if (!title.trim()) {
+    return new Response("Título é obrigatório", { status: 400 });
+  }
+  if (!rawSlug.trim()) {
+    return new Response("Slug é obrigatório", { status: 400 });
+  }
+  if (!author.trim()) {
+    return new Response("Autor é obrigatório", { status: 400 });
+  }
+  if (!categoryId.trim()) {
+    return new Response("Categoria é obrigatória", { status: 400 });
+  }
+
+  const slug = normalizeSlug(rawSlug);
+
+  // Check if slug is already taken by another article
+  const { data: existingArticle } = await supabase
+    .from("articles")
+    .select("id")
+    .eq("slug", slug)
+    .neq("id", id)
+    .single();
+
+  if (existingArticle) {
+    return new Response("Slug já existe. Escolha outro slug.", { status: 400 });
+  }
+
+  const articleData = {
+    title: title.trim(),
+    slug: slug.trim(),
+    excerpt: excerpt.trim() || null,
+    minutes,
+    body: body || null,
+    image_url: imageUrl.trim() || null,
+    category_id: categoryId.trim(),
+    author: author.trim(),
+  };
+
+  const { error } = await supabase
+    .from("articles")
+    .update(articleData)
+    .eq("id", id);
+
+  if (error) {
+    console.error("Erro ao atualizar artigo:", error);
+    return new Response(`Erro: ${error.message}`, { status: 500 });
+  }
+
+  redirect("/admin");
+}
