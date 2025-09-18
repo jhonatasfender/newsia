@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServerWithCookies } from "@/lib/supabase/server";
+import { requireAdminAPI } from "@/lib/middleware/api-auth";
 
 export async function GET() {
   try {
@@ -24,6 +25,12 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const { response } = await requireAdminAPI();
+  
+  if (response) {
+    return response;
+  }
+
   try {
     const supabase = await supabaseServerWithCookies();
     const { title, subtitle, image_url, is_active } = await request.json();

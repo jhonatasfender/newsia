@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServerWithCookies } from "@/lib/supabase/server";
+import { requireAdminAPI } from "@/lib/middleware/api-auth";
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { response } = await requireAdminAPI();
+  
+  if (response) {
+    return response;
+  }
+
   try {
     const { id } = await params;
     const supabase = await supabaseServerWithCookies();
@@ -50,6 +57,12 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { response } = await requireAdminAPI();
+  
+  if (response) {
+    return response;
+  }
+
   try {
     const { id } = await params;
     const supabase = await supabaseServerWithCookies();

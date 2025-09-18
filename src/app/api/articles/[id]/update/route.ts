@@ -1,19 +1,19 @@
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabase/server";
 import { normalizeSlug } from "@/lib/utils";
+import { requireAdminAPI } from "@/lib/middleware/api-auth";
 
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const supabase = await supabaseServer();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  if (!session) {
-    redirect("/login");
+  const { response } = await requireAdminAPI();
+  
+  if (response) {
+    return response;
   }
+
+  const supabase = await supabaseServer();
 
   const { id } = await params;
   const formData = await request.formData();

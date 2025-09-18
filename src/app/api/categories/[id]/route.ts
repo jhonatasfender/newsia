@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
 import { normalizeSlug } from "@/lib/utils";
+import { requireAdminAPI } from "@/lib/middleware/api-auth";
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { response } = await requireAdminAPI();
+  
+  if (response) {
+    return response;
+  }
+
   try {
     const { id } = await params;
     const supabase = await supabaseServer();
@@ -46,6 +53,12 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { profile, response } = await requireAdminAPI();
+  
+  if (response) {
+    return response;
+  }
+
   try {
     const { id } = await params;
     const supabase = await supabaseServer();

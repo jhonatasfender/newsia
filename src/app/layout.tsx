@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "Impacto IA",
+    title: "Impacto AI",
     description: "Inteligência Artificial e Sociedade",
   };
 }

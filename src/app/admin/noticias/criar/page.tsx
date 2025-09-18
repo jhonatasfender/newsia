@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import { requireAdmin } from "@/lib/middleware/auth";
 import { supabaseServer } from "@/lib/supabase/server";
 import CreateArticleForm from "@/components/CreateArticleForm";
 import type { Metadata } from "next";
@@ -9,11 +9,8 @@ export const metadata: Metadata = {
 };
 
 export default async function CreateArticlePage() {
+  await requireAdmin();
   const supabase = await supabaseServer();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  if (!session) redirect("/login");
 
   const { data: categories } = await supabase
     .from("categories")

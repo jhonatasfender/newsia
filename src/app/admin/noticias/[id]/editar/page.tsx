@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { requireAdmin } from "@/lib/middleware/auth";
 import { supabaseServer } from "@/lib/supabase/server";
 import type { OutputData } from "@editorjs/editorjs";
 import EditArticleForm from "@/components/EditArticleForm";
@@ -13,11 +14,8 @@ type Params = { params: Promise<{ id: string }> };
 
 
 export default async function EditArticlePage({ params }: Params) {
+  await requireAdmin();
   const supabase = await supabaseServer();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  if (!session) redirect("/login");
 
   const { id } = await params;
 

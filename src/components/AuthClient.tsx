@@ -35,7 +35,7 @@ export default function AuthClient(): ReactElement {
               
               if (response.ok) {
                 await new Promise(resolve => setTimeout(resolve, 100));
-                router.replace("/admin");
+                router.replace("/");
               } else {
                 console.error("Erro ao definir sessão:", await response.text());
               }
@@ -43,7 +43,7 @@ export default function AuthClient(): ReactElement {
               console.error("Erro ao definir sessão:", error);
             }
           } else {
-            router.replace("/admin");
+            router.replace("/");
           }
         });
       }

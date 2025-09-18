@@ -1,7 +1,7 @@
-import { redirect } from "next/navigation";
-import { supabaseServer } from "@/lib/supabase/server";
+import { requireAdmin, isSuperAdmin } from "@/lib/middleware/auth";
 import ArticlesTable from "@/components/ArticlesTable";
 import AdminClient from "@/components/AdminClient";
+import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,14 +10,8 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminHome() {
-  const supabase = await supabaseServer();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  if (!session) {
-    redirect("/login");
-  }
+  await requireAdmin();
+  const isSuperAdminUser = await isSuperAdmin();
 
   return (
     <main className="min-h-screen">
@@ -33,12 +27,20 @@ export default async function AdminHome() {
           </div>
           <div className="flex gap-3">
             <AdminClient />
-            <a
+            {isSuperAdminUser && (
+              <Link
+                href="/admin/usuarios"
+                className="h-10 px-4 rounded-md bg-gray-600 text-white inline-flex items-center"
+              >
+                Gerenciar Usuários
+              </Link>
+            )}
+            <Link
               href="/admin/noticias/criar"
               className="h-10 px-4 rounded-md bg-black text-white inline-flex items-center"
             >
               Criar Notícia
-            </a>
+            </Link>
           </div>
         </div>
       </div>

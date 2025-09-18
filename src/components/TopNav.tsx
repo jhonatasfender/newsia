@@ -1,18 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import { supabaseServer } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 import { unstable_noStore as noStore } from "next/cache";
 import { NewsRepository } from "@/data/news.repository";
 import { getActiveBannerForSSG } from "@/hooks/useBanner";
+import { isAdmin } from "@/lib/middleware/auth";
+import LogoutButton from "./LogoutButton";
 import type { ReactElement } from "react";
-
-async function signOut() {
-  "use server";
-  const supabase = await supabaseServer();
-  await supabase.auth.signOut();
-  redirect("/login");
-}
 
 export default async function TopNav(): Promise<ReactElement> {
   noStore();
@@ -23,6 +17,7 @@ export default async function TopNav(): Promise<ReactElement> {
 
   const categories = await NewsRepository.getCategoriesForSSG();
   const banner = await getActiveBannerForSSG();
+  const isAdminUser = await isAdmin();
 
   return (
     <header className="w-full bg-black text-white sticky top-0 z-50">
@@ -39,7 +34,7 @@ export default async function TopNav(): Promise<ReactElement> {
             height={32}
             className="w-8 h-8"
           />
-          Impacto IA
+          Impacto AI
         </Link>
 
         {/* Center menu */}
@@ -72,11 +67,18 @@ export default async function TopNav(): Promise<ReactElement> {
           </div>
 
           {user ? (
-            <form action={signOut}>
-              <button className="h-9 px-3 rounded-md bg-white text-black text-sm font-semibold cursor-pointer">
-                Sair
-              </button>
-            </form>
+            <>
+              {isAdminUser && (
+                <Link
+                  href="/admin"
+                  className="h-9 w-9 inline-flex items-center justify-center rounded-md bg-white/10 text-white/70 hover:bg-white/20 hover:text-white transition-colors"
+                  title="Painel Administrativo"
+                >
+                  <i className="fa-solid fa-cog text-sm" aria-hidden="true"></i>
+                </Link>
+              )}
+              <LogoutButton />
+            </>
           ) : (
             <Link
               href="/login"

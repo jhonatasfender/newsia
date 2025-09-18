@@ -98,7 +98,10 @@ export default async function ArticlePage({ params }: Params) {
             </ol>
           </nav>
           <header className="mb-6">
-            <div className="flex items-center gap-3 text-xs mb-2">
+            <h1 className="text-3xl font-extrabold leading-tight">
+              {article.title}
+            </h1>
+            <div className="flex items-center gap-3 text-xs mb-2 pt-2">
               <span className="inline-flex items-center px-2 py-0.5 rounded bg-[color:var(--color-primary)] text-white font-semibold uppercase tracking-wide">
                 {article.categories?.title || "Geral"}
               </span>
@@ -108,9 +111,6 @@ export default async function ArticlePage({ params }: Params) {
                 {article.author ? ` • Por ${article.author}` : ""}
               </span>
             </div>
-            <h1 className="text-3xl font-extrabold leading-tight">
-              {article.title}
-            </h1>
             {article.excerpt && (
               <p className="mt-4 text-lg text-black/70 leading-relaxed">
                 {article.excerpt}

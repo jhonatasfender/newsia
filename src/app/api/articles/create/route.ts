@@ -1,16 +1,16 @@
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabase/server";
 import { normalizeSlug } from "@/lib/utils";
+import { requireAdminAPI } from "@/lib/middleware/api-auth";
 
 export async function POST(request: Request) {
-  const supabase = await supabaseServer();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  if (!session) {
-    redirect("/login");
+  const { response } = await requireAdminAPI();
+  
+  if (response) {
+    return response;
   }
+
+  const supabase = await supabaseServer();
 
   const formData = await request.formData();
   const title = String(formData.get("title") || "");

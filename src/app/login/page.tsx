@@ -4,8 +4,8 @@ import AuthClient from "@/components/AuthClient";
 
 export default async function LoginPage() {
   const supabase = await supabaseServer();
-  const { data } = await supabase.auth.getSession();
-  if (data.session) redirect("/admin");
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) redirect("/");
   return (
     <main className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-sm bg-white border border-black/10 rounded-lg p-6 shadow-sm">
